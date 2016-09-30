@@ -7,11 +7,13 @@ import curses.textpad
 from Queue import Queue
 
 class GUI:
-    def __init__(self, sock):
+    def __init__(self, sock, name, other_name):
         self.msg_send = Queue()
         self.sock = sock
         self.KILL_MSG = "*>*>*>*>*>"
         self.ALIVE = False
+        self.name = name
+        self.other_name = other_name
 
     def start(self):
         curses.wrapper(self.initialize)
@@ -75,6 +77,7 @@ class Communicator:
         self.TIMEOUT = 1
 
     def start(self):
+        name = raw_input("Enter your name: ")
         instruction = raw_input("Wait for a connection, or attempt to Connect (w/c): ")
         if instruction == "w":
             print "waiting..."
@@ -84,13 +87,28 @@ class Communicator:
             conn, addr = self.sock.accept() # here's where we wait
             conn.settimeout(self.TIMEOUT)
             self.op_socket = conn
+
+            #try and retrieve other user's name; first message sent
+            other_name = None
+            while not other_name:
+                other_name = self.op_socket.recv(1024)
+            # having received name, send our name
+            self.op_socket.sendall(name)
         else:
             ip = raw_input("Enter ip address: ")
             self.sock.connect((ip, self.PORT))
             self.sock.settimeout(self.TIMEOUT)
             self.op_socket = self.sock
 
-        self.gui = GUI(self.op_socket)
+            #send our name to the other user
+            self.op_socket.sendall(name)
+            # wait for their name in return
+            other_name = None
+            while not other_name:
+                other_name = self.op_socket.recv(1024)
+            
+
+        self.gui = GUI(self.op_socket, name, other_name)
         self.gui.start()
 
         print "pigeon has experienced the sweet release of death"
@@ -115,7 +133,7 @@ def receive_worker(sock, gui):
                 gui.display_message("Other side has disconnected, [ENTER] to quit", "**SYSTEM**")
                 gui.ALIVE = False
             elif message:
-                gui.display_message(message, "Them")
+                gui.display_message(message, gui.other_name)
         except:
             continue
             
