@@ -120,6 +120,7 @@ def send_worker(sock, gui):
             message = gui.msg_send.get(block=True, timeout=5)
             sock.sendall(message)
             if message == gui.KILL_MSG:
+                gui.display_message("You have disconnected, [ENTER] to quit", "**SYSTEM**")
                 gui.ALIVE = False
         except:
             continue # we can do something here maybe
