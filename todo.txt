@@ -1,0 +1,10 @@
+Stuff to implement:
+
+scroll chat history
+user names
+allow continued use after closing gui
+
+
+wild'n'crazy:
+
+remember which ips can be connected to
