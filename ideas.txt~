@@ -1,0 +1,6 @@
+structure of the program:
+
+GUI class
+    public screen?
+    Receiver knows about GUI, can write to its screen
+    

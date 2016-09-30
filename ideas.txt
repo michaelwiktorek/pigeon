@@ -1,0 +1,19 @@
+structure of the program:
+
+GUI class
+    public screen?
+    Receiver knows about GUI, can write to its screen
+    
+forget all the garbage I thought up before
+
+Connector class:
+asks: wait for connection or attempt to connect?
+either way, establishes a TCP connection
+
+once we have a connection (socket), spin up two threads
+Sender, waits on the send queue and writes messages from it to the socket
+Receiver, waits on the socket, writes messages from it to either a GUI queue or the display_pad
+
+Also, once we have a connection, start the GUI and begin printing/taking input
+
+this is the correct structure, I am sure of it
