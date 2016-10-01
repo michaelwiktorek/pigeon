@@ -1,6 +1,5 @@
 Stuff to implement:
 
-scroll chat history
 user names DONE 
 allow continued use after closing gui DONE
 allow typing box to expand
