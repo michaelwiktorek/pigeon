@@ -16,17 +16,19 @@ class Communicator:
         try:
             config_file = open("pigeon.conf", 'r')
             print "Reading configuration file..."
-            name = config_file.readline()
+            name = config_file.readline().replace("\n", "")
             config_file.close()
+            print "Your name is " + name
         except:
             print "No configuration file found, creating..."
             config_file = open("pigeon.conf", 'w')
             name = raw_input("Enter your name: ")
             config_file.write(name + "\n")
             config_file.close()
+            print "Your name is now " + name
             
         while self.connect_loop:
-            instruction = raw_input("Wait for a connection, attempt to Connect, or Quit (w/c/q): ")
+            instruction = raw_input("(w)ait for connection, (c)onnect, change (n)ame, or (q)uit (w/c/n/q): ")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             if instruction == "w":
                 print "waiting..."
@@ -59,6 +61,16 @@ class Communicator:
                 other_name = None
                 while not other_name:
                     other_name = self.op_socket.recv(1024)
+            elif instruction == "n":
+                try:
+                    config_file = open("pigeon.conf", 'w')
+                    name = raw_input("Enter your name: ")
+                    config_file.write(name + "\n")
+                    config_file.close()
+                    print "Your name is now " + name
+                except:
+                    print "uh oh, something went wrong"
+                continue
             else:
                 print "Pigeon has quit!"
                 return
