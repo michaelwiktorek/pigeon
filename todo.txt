@@ -5,7 +5,7 @@ allow continued use after closing gui DONE
 allow typing box to expand  [maybe impossible]
 add scrolling of text history
 better way of quitting gui program  DONE
-config file with name
+config file with name DONE
 
 wild'n'crazy:
 
