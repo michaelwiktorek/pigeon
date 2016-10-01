@@ -2,10 +2,11 @@ Stuff to implement:
 
 scroll chat history
 user names DONE 
-allow continued use after closing gui
+allow continued use after closing gui DONE
 allow typing box to expand
 add scrolling of text history
 better way of quitting gui program
+config file with name
 
 wild'n'crazy:
 

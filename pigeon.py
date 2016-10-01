@@ -70,48 +70,58 @@ class GUI:
 class Communicator:
     def __init__(self):
         print "Pigeon is starting"
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.PORT = 1777
         self.HOST = ""
-        self.AM_SERVER = False
+        self.connect_loop = True
         self.TIMEOUT = 1
 
     def start(self):
         name = raw_input("Enter your name: ")
-        instruction = raw_input("Wait for a connection, or attempt to Connect (w/c): ")
-        if instruction == "w":
-            print "waiting..."
-            self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.sock.bind((self.HOST, self.PORT))
-            self.sock.listen(1)
-            conn, addr = self.sock.accept() # here's where we wait
-            conn.settimeout(self.TIMEOUT)
-            self.op_socket = conn
+        while self.connect_loop:
+            instruction = raw_input("Wait for a connection, attempt to Connect, or Quit (w/c/q): ")
+            self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            if instruction == "w":
+                print "waiting..."
+                self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+                self.sock.bind((self.HOST, self.PORT))
+                self.sock.listen(1)
+                conn, addr = self.sock.accept() # here's where we wait
+                conn.settimeout(self.TIMEOUT)
+                self.op_socket = conn
 
-            #try and retrieve other user's name; first message sent
-            other_name = None
-            while not other_name:
-                other_name = self.op_socket.recv(1024)
-            # having received name, send our name
-            self.op_socket.sendall(name)
-        else:
-            ip = raw_input("Enter ip address: ")
-            self.sock.connect((ip, self.PORT))
-            self.sock.settimeout(self.TIMEOUT)
-            self.op_socket = self.sock
+                #try and retrieve other user's name; first message sent
+                other_name = None
+                while not other_name:
+                    other_name = self.op_socket.recv(1024)
+                    # having received name, send our name
+                self.op_socket.sendall(name)
+            elif instruction == "c":
+                ip = raw_input("Enter ip address: ")
+                try:
+                    self.sock.connect((ip, self.PORT))
+                except:
+                    print "Connection failed!"
+                    continue
+                self.sock.settimeout(self.TIMEOUT)
+                self.op_socket = self.sock
 
-            #send our name to the other user
-            self.op_socket.sendall(name)
-            # wait for their name in return
-            other_name = None
-            while not other_name:
-                other_name = self.op_socket.recv(1024)
-            
+                #send our name to the other user
+                self.op_socket.sendall(name)
+                # wait for their name in return
+                other_name = None
+                while not other_name:
+                    other_name = self.op_socket.recv(1024)
+            else:
+                print "Pigeon has quit!"
+                return
+                
 
-        self.gui = GUI(self.op_socket, name, other_name)
-        self.gui.start()
+            self.gui = GUI(self.op_socket, name, other_name)
+            self.gui.start()
+            self.op_socket.close()
+            self.sock.close()
 
-        print "pigeon has experienced the sweet release of death"
+        print "Pigeon has quit!"
 
 
 def send_worker(sock, gui):
