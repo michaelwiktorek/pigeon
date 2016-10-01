@@ -1,9 +1,11 @@
 Stuff to implement:
 
 scroll chat history
-user names
+user names DONE 
 allow continued use after closing gui
-
+allow typing box to expand
+add scrolling of text history
+better way of quitting gui program
 
 wild'n'crazy:
 
