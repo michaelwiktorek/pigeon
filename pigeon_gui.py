@@ -1,6 +1,7 @@
 import threading
 import socket
 import curses
+import time
 import curses.textpad
 from Queue import Queue
 from pigeon_threads import Pigeon_Threads
@@ -28,6 +29,7 @@ class Pigeon_GUI:
         # we display the message you type in the text window
         self.text_window = curses.newwin(1, scr_x, scr_y-1, 0)
         self.textbox = curses.textpad.Textbox(self.text_window, insert_mode=True)
+        self.textbox.stripspaces = True
 
         sender = threading.Thread(target=Pigeon_Threads.send_worker, args=(self.sock, self))
         receiver = threading.Thread(target=Pigeon_Threads.receive_worker, args=(self.sock, self))
@@ -43,19 +45,23 @@ class Pigeon_GUI:
         #loop accepting input and echoing to the display_pad
         while self.ALIVE:
             message = self.textbox.edit()
-            # put message into send queue
-            self.msg_send.put(message)
             # for whatever reason only the empty string matches correctly?
-            if message == "":
+            if message.replace(" ", "") == "quit":
                 self.msg_send.put(self.KILL_MSG)
+                self.ALIVE = False
+                time.sleep(1)
+            else:
+                self.display_message(message, "You")
+                self.msg_send.put(message)
+            # put message into send queue
             self.text_window.clear()
             self.text_window.move(0,0)
-            self.display_message(message, "You")
+            
 
     def display_message(self, message, name):
         pad_y, pad_x =self.display_pad.getmaxyx()
         curs_y, curs_x = self.display_pad.getyx()
-        self.display_pad.addstr(name + ":  " + message)
+        self.display_pad.addstr(name + ": " + message)
         #self.display_pad.addstr(str(curs_y) + "/" + str(pad_y))
         
         if curs_y == pad_y - 1:
