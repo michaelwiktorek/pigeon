@@ -2,9 +2,9 @@ Stuff to implement:
 
 user names DONE 
 allow continued use after closing gui DONE
-allow typing box to expand
+allow typing box to expand  [maybe impossible]
 add scrolling of text history
-better way of quitting gui program
+better way of quitting gui program  DONE
 config file with name
 
 wild'n'crazy:
