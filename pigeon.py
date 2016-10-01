@@ -10,7 +10,21 @@ class Communicator:
         self.TIMEOUT = 1
 
     def start(self):
-        name = raw_input("Enter your name: ")
+        # try to read username from config file
+        # if no file, then create one!
+        name = ""
+        try:
+            config_file = open("pigeon.conf", 'r')
+            print "Reading configuration file..."
+            name = config_file.readline()
+            config_file.close()
+        except:
+            print "No configuration file found, creating..."
+            config_file = open("pigeon.conf", 'w')
+            name = raw_input("Enter your name: ")
+            config_file.write(name + "\n")
+            config_file.close()
+            
         while self.connect_loop:
             instruction = raw_input("Wait for a connection, attempt to Connect, or Quit (w/c/q): ")
             self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
