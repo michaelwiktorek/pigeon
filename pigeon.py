@@ -7,7 +7,7 @@ from pigeon_register_agent import Pigeon_Register_Agent
 
 class Communicator_Main:
     def __init__(self, config, register_agent):
-        self.HOST = "127.0.0.1"
+        self.HOST = ""
         self.config = config
         self.register_agent = register_agent
         self.connect_spawn_loop = True
