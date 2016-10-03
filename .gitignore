@@ -1,3 +1,4 @@
 #emacs files
 *~
 *.conf
+*.pyc

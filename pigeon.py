@@ -1,5 +1,6 @@
 import socket
 import sys
+import signal
 from pigeon_gui import Pigeon_GUI
 from pigeon_config import Pigeon_Config
 from pigeon_constants import Pigeon_Constants as C
@@ -46,7 +47,7 @@ class Communicator_Main:
         sock.close()
         # if no connection was established, return failure
         if conn is None:
-            print "No connection established"
+            print " Wait for connection cancelled!"
             return (None, None)
         conn.settimeout(self.TIMEOUT)
         # wait for other user's name
@@ -140,6 +141,9 @@ if __name__ == '__main__':
         
     # create main program communicator and start it
     comm = Communicator_Main(config, reg_agent)
+    def kill_wait(*args):
+        comm.server_wait = False
+    signal.signal(signal.SIGINT, kill_wait)
     comm.start()
     
     # after we're done, unregister from server
