@@ -7,7 +7,7 @@ from pigeon_constants import Pigeon_Constants as C
 class Pigeon_Register_Agent:
     def __init__(self, server_ip):
         self.CONNECTED = False
-        self.HOST = "127.0.0.1"
+        self.HOST = ""
         self.server_ip = server_ip
         self.MAX_ATTEMPTS = 3
         self.ALIVE = True
@@ -42,7 +42,7 @@ class Pigeon_Register_Agent:
         test_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         test_sock.bind((self.HOST, C.CLIENT_TEST_PORT))
         test_sock.settimeout(1)
-        while self.ALIVE:   
+        while self.ALIVE:
             try:
                 mesg, addr = test_sock.recvfrom(1024)
                 if mesg == C.TEST:

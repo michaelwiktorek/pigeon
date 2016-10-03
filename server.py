@@ -43,7 +43,6 @@ class Pigeon_Server:
             # THIS COULD BE VERY WEIRD WITH THREADS, LOOK INTO IT
             # mark unresponsive clients for deletion
             for addr in self.online_users.keys():
-                print "Sending test to " + addr + ":" + str(C.CLIENT_TEST_PORT)
                 prune_socket.sendto(C.TEST, (addr, C.CLIENT_TEST_PORT))
                 try:
                     mesg, addr = prune_socket.recvfrom(1024)
