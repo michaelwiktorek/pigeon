@@ -122,9 +122,9 @@ if __name__ == '__main__':
     # create registry agent and try to register with default server
     reg_agent = Pigeon_Register_Agent(server)
     if reg_agent.register(config.name):
-        print "\nRegistered with server at " + server + " as " + config.name
+        print "Registered with server at " + server + " as " + config.name
     else:
-        print "\nServer at " + server + " could not be reached, restart or connect directly"
+        print "Server at " + server + " could not be reached, restart or connect directly"
         
     # create main program communicator and start it
     comm = Communicator_Main(config, reg_agent)

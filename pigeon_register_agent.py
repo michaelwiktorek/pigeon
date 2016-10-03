@@ -35,6 +35,7 @@ class Pigeon_Register_Agent:
                 continue
         send_sock.close()
         attempts_made = 0
+        print ""
         return False
 
     def keep_alive(self):
@@ -60,7 +61,7 @@ class Pigeon_Register_Agent:
         if self.send_wait_ack(name + ":" + C.REGISTER):
             self.ALIVE = True
             self.CONNECTED = True
-            print "starting keep_alive thread"
+            print "Starting keep_alive thread at port " + str(C.CLIENT_TEST_PORT)
             self.keep_alive_thread = threading.Thread(target=self.keep_alive)
             self.keep_alive_thread.start()
             return True
