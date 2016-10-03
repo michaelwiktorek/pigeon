@@ -1,4 +1,5 @@
 import socket
+import sys
 import threading
 import signal
 from pigeon_constants import Pigeon_Constants as C
@@ -17,17 +18,20 @@ class Pigeon_Register_Agent:
         send_sock.sendto(message, (self.server_ip, C.SERVER_MAIN_PORT))
         send_sock.settimeout(1)
         attempts_made = 0
+        sys.stdout.write("Sending " + message + " to server")
+        sys.stdout.flush()
         while attempts_made < self.MAX_ATTEMPTS:
             try:
                 attempts_made = attempts_made + 1
                 mesg, addr = send_sock.recvfrom(1024)
                 if mesg == C.ACK:
                     send_sock.close()
-                    print "Server acknowledges " + message
+                    print "\nServer acknowledges " + message
                     attempts_made = 0
                     return True
             except:
-                print "Server did not respond to " + message + ", trying again..."
+                sys.stdout.write(".")
+                sys.stdout.flush()
                 continue
         send_sock.close()
         attempts_made = 0
@@ -56,6 +60,7 @@ class Pigeon_Register_Agent:
         if self.send_wait_ack(name + ":" + C.REGISTER):
             self.ALIVE = True
             self.CONNECTED = True
+            print "starting keep_alive thread"
             self.keep_alive_thread = threading.Thread(target=self.keep_alive)
             self.keep_alive_thread.start()
             return True
@@ -64,8 +69,12 @@ class Pigeon_Register_Agent:
 
     def unregister(self, name):
         self.ALIVE = False
-        self.CONNECTED = False
-        return self.send_wait_ack(name + ":" + C.UNREGISTER)
+        # only send an unregister message if we registered successfully
+        if self.CONNECTED:
+            self.CONNECTED = False
+            return self.send_wait_ack(name + ":" + C.UNREGISTER)
+        else:
+            return False
 
 if __name__ == "__main__":
     agent = Pigeon_Register_Agent("127.0.0.1")

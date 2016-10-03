@@ -12,7 +12,7 @@ class Pigeon_Server:
         self.userlist_lock = threading.Lock()
         self.ALIVE = False
         self.TIMEOUT = 1
-        self.HOST = "127.0.0.1"
+        self.HOST = ""
 
     def start(self):
         self.ALIVE = True

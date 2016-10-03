@@ -1,4 +1,5 @@
 import socket
+import sys
 from pigeon_gui import Pigeon_GUI
 from pigeon_config import Pigeon_Config
 from pigeon_constants import Pigeon_Constants as C
@@ -6,7 +7,6 @@ from pigeon_register_agent import Pigeon_Register_Agent
 
 class Communicator_Main:
     def __init__(self, config, register_agent):
-        print "Pigeon is starting"
         self.HOST = "127.0.0.1"
         self.config = config
         self.register_agent = register_agent
@@ -99,7 +99,7 @@ class Communicator_Main:
             # establish connection to other user
             conn, other_name = self.handle_instructions(config.name)
             if self.QUIT:
-                print "Pigeon has quit!"
+                print "Quitting....."
                 return
             elif conn is not None:
                 # initialize GUI with connection and names
@@ -110,17 +110,21 @@ class Communicator_Main:
                 conn.close()
         
 if __name__ == '__main__':
+    print "Pigeon is starting!"
     
     # create config object and get username
     config = Pigeon_Config()
     username = config.obtain_name()
-    
-    # create registry agent and try to register with default server
-    reg_agent = Pigeon_Register_Agent(C.DEFAULT_SERVER)
-    if reg_agent.register(config.name):
-        print "Registered with server at " + C.DEFAULT_SERVER + " as " + config.name
+    if len(sys.argv) > 1:
+        server = sys.argv[1]
     else:
-        print "Server at " + C.DEFAULT_SERVER + " could not be reached, restart or connect directly"
+        server = C.DEFAULT_SERVER
+    # create registry agent and try to register with default server
+    reg_agent = Pigeon_Register_Agent(server)
+    if reg_agent.register(config.name):
+        print "\nRegistered with server at " + server + " as " + config.name
+    else:
+        print "\nServer at " + server + " could not be reached, restart or connect directly"
         
     # create main program communicator and start it
     comm = Communicator_Main(config, reg_agent)
@@ -128,3 +132,5 @@ if __name__ == '__main__':
     
     # after we're done, unregister from server
     reg_agent.unregister(config.name)
+
+    print "Pigeon has quit!"
