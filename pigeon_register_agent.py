@@ -27,7 +27,7 @@ class Pigeon_Register_Agent:
                     attempts_made = 0
                     return True
             except:
-                print "Server did not respond, trying again..."
+                print "Server did not respond to " + message + ", trying again..."
                 continue
         send_sock.close()
         attempts_made = 0
