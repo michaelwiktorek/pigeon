@@ -12,3 +12,6 @@ class Pigeon_Constants:
 
     # numbers
     ONLINE_TIMEOUT_SECS = 10  # set to 60 or higher for production use
+
+    # addresses
+    DEFAULT_SERVER = "127.0.0.1"

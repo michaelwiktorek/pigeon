@@ -1,36 +1,20 @@
 import socket
 from pigeon_gui import Pigeon_GUI
+from pigeon_config import Pigeon_Config
 from pigeon_constants import Pigeon_Constants as C
 from pigeon_register_agent import Pigeon_Register_Agent
 
 class Communicator_Main:
-    def __init__(self):
+    def __init__(self, config, register_agent):
         print "Pigeon is starting"
         self.HOST = "127.0.0.1"
+        self.config = config
+        self.register_agent = register_agent
         self.connect_spawn_loop = True
         self.server_wait = True
         self.TIMEOUT = 1
         self.SERVER_TIMEOUT = 1
         self.QUIT = False
-
-    # attempt to read name from config file
-    # if no file exists, create it
-    def read_write_config(self):
-        name = ""
-        try:
-            config_file = open("pigeon.conf", 'r')
-            print "Reading configuration file..."
-            name = config_file.readline().replace("\n", "")
-            config_file.close()
-            print "Your name is " + name
-        except:
-            print "No configuration file found, creating..."
-            config_file = open("pigeon.conf", 'w')
-            name = raw_input("Enter your name: ")
-            config_file.write(name + "\n")
-            config_file.close()
-            print "Your name is now " + name
-        return name
 
     # listen for other user's name on socket
     def recv_other_name(self, sock):
@@ -90,17 +74,6 @@ class Communicator_Main:
         other_name = self.recv_other_name(sock)
         return (sock, other_name)
 
-    # change our name in the configuration file
-    def change_name_config(self, name):
-        try:
-            config_file = open("pigeon.conf", 'w')
-            name = raw_input("Enter your name: ")
-            config_file.write(name + "\n")
-            config_file.close()
-            print "Your name is now " + name
-        except:
-            print "Error changing config file!"
-
     # get a user instruction and call the appropriate method
     def handle_instructions(self, name):
         instruction = raw_input("(w)ait for connection, (c)onnect, change (n)ame, or (q)uit (w/c/n/q): ")
@@ -109,7 +82,10 @@ class Communicator_Main:
         elif instruction == "c":
             return self.attempt_connection(name)
         elif instruction == "n":
-            self.change_name_config(name)
+            old_name = config.name
+            config.change_name_config(name)
+            if register_agent.CONNECTED:
+                register_agent.re_register(old_name, config.name)
             return (None, None)
         elif instruction == "q":
             self.QUIT = True
@@ -119,24 +95,36 @@ class Communicator_Main:
 
     # start looping, taking user input
     def start(self):
-        # try to read username from config file
-        # if no file, then create one!
-        name = self.read_write_config()
-            
         while self.connect_spawn_loop:
             # establish connection to other user
-            conn, other_name = self.handle_instructions(name)
+            conn, other_name = self.handle_instructions(config.name)
             if self.QUIT:
                 print "Pigeon has quit!"
                 return
             elif conn is not None:
                 # initialize GUI with connection and names
-                gui = Pigeon_GUI(conn, name, other_name)
+                gui = Pigeon_GUI(conn, config.name, other_name)
                 # start gui execution
                 gui.start()
                 # gui has died, so close connection
                 conn.close()
         
 if __name__ == '__main__':
-    comm = Communicator_Main()
+    
+    # create config object and get username
+    config = Pigeon_Config()
+    username = config.obtain_name()
+    
+    # create registry agent and try to register with default server
+    reg_agent = Pigeon_Register_Agent(C.DEFAULT_SERVER)
+    if reg_agent.register(config.name):
+        print "Registered with server at " + C.DEFAULT_SERVER + " as " + config.name
+    else:
+        print "Server at " + C.DEFAULT_SERVER + " could not be reached"
+        
+    # create main program communicator and start it
+    comm = Communicator_Main(config, reg_agent)
     comm.start()
+    
+    # after we're done, unregister from server
+    reg_agent.unregister(config.name)
