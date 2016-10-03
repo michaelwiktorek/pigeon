@@ -2,10 +2,12 @@ import socket
 import sys
 import threading
 import signal
+import json
 from pigeon_constants import Pigeon_Constants as C
 
 class Pigeon_Register_Agent:
     def __init__(self, server_ip):
+        self.userlist = {}
         self.CONNECTED = False
         self.HOST = ""
         self.server_ip = server_ip
@@ -18,17 +20,22 @@ class Pigeon_Register_Agent:
         send_sock.sendto(message, (self.server_ip, C.SERVER_MAIN_PORT))
         send_sock.settimeout(1)
         attempts_made = 0
-        sys.stdout.write("Sending " + message + " to server")
-        sys.stdout.flush()
+        #sys.stdout.write("Sending " + message + " to server")
+        #sys.stdout.flush()
         while attempts_made < self.MAX_ATTEMPTS:
             try:
                 attempts_made = attempts_made + 1
                 mesg, addr = send_sock.recvfrom(1024)
                 if mesg == C.ACK:
                     send_sock.close()
-                    print "\nServer acknowledges " + message
+                    #print "\nServer acknowledges " + message
                     attempts_made = 0
                     return True
+                else:
+                    send_sock.close()
+                    #print "\nServer acknowledges " + message
+                    attempts_made = 0
+                    return mesg
             except:
                 sys.stdout.write(".")
                 sys.stdout.flush()
@@ -51,6 +58,19 @@ class Pigeon_Register_Agent:
                 continue
         test_sock.close()
 
+    def request_userlist(self, name):
+        # return deserialized json userlist
+        mesg = self.send_wait_ack(name + ":" + C.REQUEST)
+        if mesg:
+            self.userlist = json.loads(mesg)
+            return True
+        else:
+            return False
+
+    def print_userlist(self):
+        for addr in self.userlist.keys():
+            print self.userlist[addr][0] + " online at " + addr
+        
     # unregister and re-register without killing keepalive thread
     def re_register(self, old_name, new_name):
         self.send_wait_ack(old_name + ":" + C.UNREGISTER)
@@ -61,7 +81,7 @@ class Pigeon_Register_Agent:
         if self.send_wait_ack(name + ":" + C.REGISTER):
             self.ALIVE = True
             self.CONNECTED = True
-            print "Starting keep_alive thread at port " + str(C.CLIENT_TEST_PORT)
+            #print "Starting keep_alive thread at port " + str(C.CLIENT_TEST_PORT)
             self.keep_alive_thread = threading.Thread(target=self.keep_alive)
             self.keep_alive_thread.start()
             return True

@@ -76,7 +76,8 @@ class Communicator_Main:
 
     # get a user instruction and call the appropriate method
     def handle_instructions(self, name):
-        instruction = raw_input("(w)ait for connection, (c)onnect, change (n)ame, or (q)uit (w/c/n/q): ")
+        print "(w)ait for connection, (c)onnect, change (n)ame, (r)equest userlist, or (q)uit: "
+        instruction = raw_input("(w/c/n/r/q): ")
         if instruction == "w":
             return self.wait_connection(name)
         elif instruction == "c":
@@ -84,13 +85,21 @@ class Communicator_Main:
         elif instruction == "n":
             old_name = config.name
             config.change_name_config(name)
-            if register_agent.CONNECTED:
-                register_agent.re_register(old_name, config.name)
+            if self.register_agent.CONNECTED:
+                self.register_agent.re_register(old_name, config.name)
             return (None, None)
         elif instruction == "q":
             self.QUIT = True
             return (None, None)
+        elif instruction == "r":
+            if self.register_agent.CONNECTED:
+                self.register_agent.request_userlist(config.name)
+                self.register_agent.print_userlist()
+            else:
+                print "Not connected to server"
+            return (None, None)
         else:
+            print "Invalid Command!"
             return (None, None)
 
     # start looping, taking user input
@@ -108,7 +117,7 @@ class Communicator_Main:
                 gui.start()
                 # gui has died, so close connection
                 conn.close()
-        
+    
 if __name__ == '__main__':
     print "Pigeon is starting!"
     
@@ -120,11 +129,14 @@ if __name__ == '__main__':
     else:
         server = C.DEFAULT_SERVER
     # create registry agent and try to register with default server
+    # TODO may want to break this out into a separate function
     reg_agent = Pigeon_Register_Agent(server)
     if reg_agent.register(config.name):
         print "Registered with server at " + server + " as " + config.name
+        reg_agent.request_userlist(config.name)
+        reg_agent.print_userlist()
     else:
-        print "Server at " + server + " could not be reached, restart or connect directly"
+        print "Server at " + server + " unreachable, continuing without server"
         
     # create main program communicator and start it
     comm = Communicator_Main(config, reg_agent)

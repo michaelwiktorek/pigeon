@@ -3,6 +3,7 @@ import threading
 import signal
 import sys
 import time
+import json
 from pigeon_constants import Pigeon_Constants as C
 
 class Pigeon_Server:
@@ -93,6 +94,12 @@ class Pigeon_Server:
                     del self.online_users[client_addr]
                 except KeyError:
                     print "User is already offline!"
+            elif mesg == C.REQUEST:
+                # serialize and send userlist to client
+                userlist = json.dumps(self.online_users)
+                list_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                list_sock.sendto(userlist, (client_addr, client_port))
+                list_sock.close()
             else:
                 continue # not strictly necessary
             

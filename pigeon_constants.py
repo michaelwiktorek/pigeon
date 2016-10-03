@@ -9,6 +9,7 @@ class Pigeon_Constants:
     REGISTER = "reg"
     UNREGISTER = "unreg"
     TEST = "test"
+    REQUEST = "requ"
 
     # numbers
     ONLINE_TIMEOUT_SECS = 10  # set to 60 or higher for production use
