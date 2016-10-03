@@ -15,18 +15,22 @@ class Pigeon_Register_Agent:
         send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # send message, await ack and resend message until ack
         send_sock.sendto(message, (self.server_ip, C.SERVER_MAIN_PORT))
+        send_sock.settimeout(1)
         attempts_made = 0
         while attempts_made < self.MAX_ATTEMPTS:
             try:
+                attempts_made = attempts_made + 1
                 mesg, addr = send_sock.recvfrom(1024)
                 if mesg == C.ACK:
                     send_sock.close()
                     print "Server acknowledges " + message
+                    attempts_made = 0
                     return True
             except:
-                print "Did not receive server acknowledgement, trying again..."
+                print "Server did not respond, trying again..."
                 continue
         send_sock.close()
+        attempts_made = 0
         return False
 
     def keep_alive(self):

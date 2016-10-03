@@ -120,7 +120,7 @@ if __name__ == '__main__':
     if reg_agent.register(config.name):
         print "Registered with server at " + C.DEFAULT_SERVER + " as " + config.name
     else:
-        print "Server at " + C.DEFAULT_SERVER + " could not be reached"
+        print "Server at " + C.DEFAULT_SERVER + " could not be reached, restart or connect directly"
         
     # create main program communicator and start it
     comm = Communicator_Main(config, reg_agent)
