@@ -1,10 +1,10 @@
 import socket
 from pigeon_gui import Pigeon_GUI
+from pigeon_constants import Pigeon_Constants as C
 
 class Communicator:
     def __init__(self):
         print "Pigeon is starting"
-        self.PORT = 1777
         self.HOST = ""
         self.connect_loop = True
         self.TIMEOUT = 1
@@ -33,7 +33,7 @@ class Communicator:
             if instruction == "w":
                 print "waiting..."
                 self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-                self.sock.bind((self.HOST, self.PORT))
+                self.sock.bind((self.HOST, C.CLIENT_MAIN_PORT))
                 self.sock.listen(1)
                 conn, addr = self.sock.accept() # here's where we wait
                 conn.settimeout(self.TIMEOUT)
@@ -48,7 +48,7 @@ class Communicator:
             elif instruction == "c":
                 ip = raw_input("Enter ip address: ")
                 try:
-                    self.sock.connect((ip, self.PORT))
+                    self.sock.connect((ip, C.CLIENT_MAIN_PORT))
                 except:
                     print "Connection failed!"
                     continue
