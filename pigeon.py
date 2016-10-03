@@ -59,7 +59,13 @@ class Communicator_Main:
     # attempt to make a connection, and send our name on it
     def attempt_connection(self, name):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        ip = raw_input("Enter ip address: ")
+        ip = raw_input("Enter ip address or name (if logged in): ")
+        if self.register_agent.CONNECTED:
+            if len(ip.split(".")) != 4:
+                # this is a name, not an IP, so search userlist
+                for addr in self.register_agent.userlist.keys():
+                    if self.register_agent.userlist[addr][0] == ip:
+                        ip = addr
         try:
             sock.connect((ip, C.CLIENT_MAIN_PORT))
         except:
