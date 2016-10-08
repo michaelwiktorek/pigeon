@@ -1,3 +1,5 @@
+from pigeon_constants import Pigeon_Constants as C
+
 class Pigeon_Threads:
 
     @staticmethod
@@ -6,7 +8,7 @@ class Pigeon_Threads:
             try:
                 message = gui.msg_send.get(block=True, timeout=5)
                 sock.sendall(message)
-                if message == gui.KILL_MSG:
+                if message == C.KILL:
                     gui.display_message("You have disconnected, goodbye!", "**SYSTEM**")
             except:
                 continue # we can do something here maybe
@@ -16,7 +18,7 @@ class Pigeon_Threads:
         while gui.ALIVE:
             try:
                 message = sock.recv(1024)
-                if message == gui.KILL_MSG:
+                if message == C.KILL:
                     gui.display_message("Other side has disconnected, [ENTER] to leave chat", "**SYSTEM**")
                     gui.ALIVE = False
                 elif message:

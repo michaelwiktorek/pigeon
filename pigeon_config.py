@@ -1,10 +1,12 @@
+from pigeon_constants import Pigeon_Constants as C
+
 class Pigeon_Config:
     def __init__(self):
         self.name = ""
     # attempt to read name from config file
     # if no file exists, create it
     def obtain_name(self):
-        name = "Anonymous"
+        name = C.DEFAULT_NAME
         try:
             config_file = open("pigeon.conf", 'r')
             print "Reading configuration file..."

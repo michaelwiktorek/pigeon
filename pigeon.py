@@ -6,7 +6,7 @@ from pigeon_config import Pigeon_Config
 from pigeon_constants import Pigeon_Constants as C
 from pigeon_register_agent import Pigeon_Register_Agent
 
-class Communicator_Main:
+class Communicator:
     def __init__(self, config, register_agent):
         self.HOST = ""
         self.config = config
@@ -146,7 +146,7 @@ if __name__ == '__main__':
         print "Server at " + server + " unreachable, continuing without server"
         
     # create main program communicator and start it
-    comm = Communicator_Main(config, reg_agent)
+    comm = Communicator(config, reg_agent)
     def kill_wait(*args):
         comm.server_wait = False
     signal.signal(signal.SIGINT, kill_wait)
