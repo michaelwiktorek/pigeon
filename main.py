@@ -11,13 +11,13 @@ if __name__ == "__main__":
     # create register agent
     # create GUI
 
-    gui = Pigeon_GUI("Pupper")
-
-    config = Pigeon_Config(gui)
+    config = Pigeon_Config()
         
     register_agent = Pigeon_Register_Agent(sys.argv)
 
     communicator = Communicator(config, register_agent)
+
+    gui = Pigeon_GUI(config, register_agent, communicator)
     
     gui.start_gui()
 

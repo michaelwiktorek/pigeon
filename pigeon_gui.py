@@ -8,11 +8,12 @@ from pigeon_constants import Pigeon_Constants as C
 from pigeon_threads import Pigeon_Threads
 
 class Pigeon_GUI:
-    def __init__(self, name):
+    def __init__(self, config, register, comm):
         self.msg_send = Queue()
         self.commands = Queue()
         self.ALIVE = False
-        self.name = name
+        self.config = config
+        self.register = register
 
     def start_input(self):
         self.input_loop()
@@ -39,6 +40,12 @@ class Pigeon_GUI:
         self.userlist.border()
         self.userlist.refresh()
 
+        self.config.get_gui(self)
+        self.name = self.config.obtain_name()
+
+        self.register.get_gui(self)
+        self.register.register(self.name)
+        
         self.start_input()
     
     def input_loop(self):  
@@ -48,14 +55,42 @@ class Pigeon_GUI:
 
             # put message in correct queue? probably this
             # spawn correct thread?
-            
-            if message.replace(" ", "").replace("\n", "") == "quit":
-                self.msg_send.put(C.KILL)
-                self.ALIVE = False
-                #time.sleep(1)
+            if message[0] == "/":
+                cmd = message.replace(" ", "").replace("\n", "")
+                if cmd  == "/quit":
+                    self.msg_send.put(C.KILL)
+                    if self.register.CONNECTED:
+                        self.register.unregister(self.name)
+                    self.system_pad.display_message("Quitting.... goodbye!", "SYSTEM")
+                    self.ALIVE = False
+                    #time.sleep(1)
+                elif cmd == "/rename":
+                    old_name = self.name
+                    self.name = self.config.change_name_config()
+                    if self.register.CONNECTED:
+                        self.register.re_register(old_name, self.name)
+                elif cmd == "/connect":
+                    # communicator needs to say this
+                    self.system_pad.display_message("Enter an IP or name", "SYSTEM")
+                    other = self.textbox.edit()
+                    self.system_pad.display_message("Can't connect to " + other, "SYSTEM")
+                elif cmd == "/online":
+                    self.system_pad.display_message("Userlist updated!", "SYSTEM")
+                elif cmd == "/register":
+                    # TODO crashes if you enter improper address format
+                    self.system_pad.display_message("Type an IP address and hit [ENTER]", "SYSTEM")
+                    ip = self.textbox.edit()
+                    if self.register.CONNECTED:
+                        self.register.unregister(self.name)
+                    self.register.set_server_ip(ip)
+                    self.register.register(self.name)
+
+                else:
+                    self.system_pad.display_message("Invalid command!", "SYSTEM")
+                    
             else:
-                self.chat_pad.display_message(message, "You")
-                self.msg_send.put(message)
+                self.system_pad.display_message(message, "You")
+                #self.msg_send.put(message)
             
 
 class Scroll_Pad:
