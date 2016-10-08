@@ -6,11 +6,14 @@ import json
 from pigeon_constants import Pigeon_Constants as C
 
 class Pigeon_Register_Agent:
-    def __init__(self, server_ip):
+    def __init__(self, argv):
         self.userlist = {}
         self.CONNECTED = False
         self.HOST = ""
-        self.server_ip = server_ip
+        if len(argv) == 2:
+            self.server_ip = argv[1]
+        else:
+            self.server_ip = C.DEFAULT_SERVER
         self.MAX_ATTEMPTS = 3
         self.ALIVE = True
         

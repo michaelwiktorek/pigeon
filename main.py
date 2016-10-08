@@ -1,3 +1,4 @@
+import sys
 from pigeon import Communicator
 from pigeon_gui import Pigeon_GUI
 from pigeon_threads import Pigeon_Threads
@@ -11,7 +12,14 @@ if __name__ == "__main__":
     # create GUI
 
     gui = Pigeon_GUI("Pupper")
-    gui.start()
+
+    config = Pigeon_Config(gui)
+        
+    register_agent = Pigeon_Register_Agent(sys.argv)
+
+    communicator = Communicator(config, register_agent)
+    
+    gui.start_gui()
 
     # GUI runs always
     #

@@ -14,40 +14,34 @@ class Pigeon_GUI:
         self.ALIVE = False
         self.name = name
 
-    def start(self):
-        curses.wrapper(self.initialize)
+    def start_input(self):
+        self.input_loop()
+        self.ALIVE = False
+
+    def start_gui(self):
+        curses.wrapper(self.initialize_elements)
        
-    def initialize(self, screen):
+    def initialize_elements(self, screen):
         self.ALIVE = True
         scr_y, scr_x = screen.getmaxyx()
+        
         # we display chat history in the display_pad
-        self.chat_pad = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)        
+        self.chat_pad = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
+        
         # we display system messages in the system window
         self.system_pad = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
-        self.chat_pad.refresh()
         
         # we display the message you type in the text window
         self.textbox = Simple_Textbox(3, scr_x, scr_y-3, 0)
-        #self.textbox = curses.textpad.Textbox(self.text_window)
-        #self.textbox.stripspaces = True
+
         # display current list of users, maybe some commands
         self.userlist = curses.newwin(2*scr_y/3, scr_x/3, 0, 2*scr_x/3)
         self.userlist.border()
         self.userlist.refresh()
-        # list of instructions
 
-
-        #sender = threading.Thread(target=Pigeon_Threads.send_worker, args=(self.sock, self))
-        #receiver = threading.Thread(target=Pigeon_Threads.receive_worker, args=(self.sock, self))
-        #sender.start()
-        #receiver.start()
-
-        self.function_loop(screen)
-        self.ALIVE = False
-        #sender.join()
-        #receiver.join()
-
-    def function_loop(self, screen):  
+        self.start_input()
+    
+    def input_loop(self):  
         #loop accepting input and echoing to the display_pad
         while self.ALIVE:
             message = self.textbox.edit()
@@ -62,9 +56,6 @@ class Pigeon_GUI:
             else:
                 self.chat_pad.display_message(message, "You")
                 self.msg_send.put(message)
-            # put message into send queue
-            #self.text_window.clear()
-            #self.text_window.move(0,0)
             
 
 class Scroll_Pad:
@@ -79,6 +70,7 @@ class Scroll_Pad:
         self.display.idlok(1)
         self.display.scrollok(True)
         self.display.leaveok(0)
+        self.refresh()
         
     def refresh(self):
         self.display.refresh(self.scroll, 0, self.y, self.x, self.nrow, self.ncol)

@@ -1,25 +1,22 @@
 from pigeon_constants import Pigeon_Constants as C
 
 class Pigeon_Config:
-    def __init__(self):
-        self.name = ""
+    def __init__(self, gui):
+        self.name = C.DEFAULT_NAME
+        self.gui = gui
     # attempt to read name from config file
     # if no file exists, create it
     def obtain_name(self):
         name = C.DEFAULT_NAME
         try:
             config_file = open("pigeon.conf", 'r')
-            print "Reading configuration file..."
             name = config_file.readline().replace("\n", "")
             config_file.close()
-            print "Your name is " + name
         except:
-            print "No configuration file found, creating..."
             config_file = open("pigeon.conf", 'w')
-            name = raw_input("Enter your name: ")
+            #name = raw_input("Enter your name: ")
             config_file.write(name + "\n")
             config_file.close()
-            print "Your name is now " + name
         self.name = name
         return name
 
@@ -27,10 +24,9 @@ class Pigeon_Config:
     def change_name_config(self, name):
         try:
             config_file = open("pigeon.conf", 'w')
-            name = raw_input("Enter your name: ")
+            #name = raw_input("Enter your name: ")
             config_file.write(name + "\n")
             config_file.close()
-            print "Your name is now " + name
             self.name = name
         except:
-            print "Error changing config file!"
+            print "we should write error to sys_display"
