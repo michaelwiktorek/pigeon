@@ -15,6 +15,7 @@ class Communicator:
         self.server_wait = True
         self.TIMEOUT = 1
         self.SERVER_TIMEOUT = 1
+        self.THREAD_STAY_ALIVE = False
         self.QUIT = False
 
     # listen for other user's name on socket
@@ -27,7 +28,6 @@ class Communicator:
 
     # wait for a connection, and send our name on it
     def wait_connection(self, name):
-        print "waiting..."
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.HOST, C.CLIENT_MAIN_PORT))
@@ -47,7 +47,6 @@ class Communicator:
         sock.close()
         # if no connection was established, return failure
         if conn is None:
-            print " Wait for connection cancelled!"
             return (None, None)
         conn.settimeout(self.TIMEOUT)
         # wait for other user's name
@@ -57,9 +56,9 @@ class Communicator:
         return (conn, other_name)
 
     # attempt to make a connection, and send our name on it
-    def attempt_connection(self, name):
+    def attempt_connection(self, name, ip):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        ip = raw_input("Enter ip address or name (if logged in): ")
+
         if self.register_agent.CONNECTED:
             if len(ip.split(".")) != 4:
                 # this is a name, not an IP, so search userlist
@@ -69,7 +68,6 @@ class Communicator:
         try:
             sock.connect((ip, C.CLIENT_MAIN_PORT))
         except:
-            print "Connection failed!"
             # return None tuple on failure
             sock.close()
             return (None, None)

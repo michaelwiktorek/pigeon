@@ -4,24 +4,24 @@ class Pigeon_Threads:
 
     @staticmethod
     def send_worker(sock, gui):
-        while gui.ALIVE:
+        while gui.communicator.THREAD_STAY_ALIVE:
             try:
-                message = gui.msg_send.get(block=True, timeout=5)
+                message = gui.msg_send.get(block=True, timeout=1)
                 sock.sendall(message)
-                if message == C.KILL:
-                    gui.display_message("You have disconnected, goodbye!", "**SYSTEM**")
+                #if message == C.KILL:
+                    #gui.chat_pad.display_message("You have disconnected, goodbye!", "**SYSTEM**")
             except:
                 continue # we can do something here maybe
 
     @staticmethod
     def receive_worker(sock, gui):
-        while gui.ALIVE:
+        while gui.communicator.THREAD_STAY_ALIVE:
             try:
                 message = sock.recv(1024)
                 if message == C.KILL:
-                    gui.display_message("Other side has disconnected, [ENTER] to leave chat", "**SYSTEM**")
-                    gui.ALIVE = False
+                    gui.chat_pad.display_message("Other side has disconnected, hit [ENTER] to leave", "SYSTEM")
+                    gui.HANGUP = True
                 elif message:
-                    gui.display_message(message, gui.other_name)
+                    gui.chat_pad.display_message(message, gui.other_name)
             except:
                 continue

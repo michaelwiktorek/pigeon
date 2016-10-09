@@ -8,12 +8,15 @@ from pigeon_constants import Pigeon_Constants as C
 from pigeon_threads import Pigeon_Threads
 
 class Pigeon_GUI:
-    def __init__(self, config, register, comm):
+    def __init__(self, config, register, communicator):
         self.msg_send = Queue()
         self.commands = Queue()
         self.ALIVE = False
         self.config = config
         self.register = register
+        self.communicator = communicator
+        self.in_conversation = False
+        self.HANGUP = False
 
     def start_input(self):
         self.input_loop()
@@ -29,6 +32,28 @@ class Pigeon_GUI:
             curs_y, curs_x = self.userlist_win.getyx()
             self.userlist_win.move(curs_y+1, 0)
         self.userlist_win.refresh()
+
+    def start_convo(self, conn, other_name):
+        self.in_conversation = True
+        self.communicator.THREAD_STAY_ALIVE = True
+        self.other_name = other_name
+        sender = threading.Thread(target=Pigeon_Threads.send_worker, args=(conn, self))
+        sender.start()
+        Pigeon_Threads.receive_worker(conn, self)
+        sender.join()
+    
+    def connect_background(self, ip):
+        conn, other_name = self.communicator.wait_connection(self.name, ip)
+        if conn:
+            self.start_convo(self, conn, other_name)
+        else:
+            self.display_pad.display_message("Failed to connect to " + ip, "SYSTEM")
+            # notify user of failure to connect
+
+    def wait_connection_background(self):
+        conn, other_name = self.communicator.wait_connection(self.name)
+        if conn:
+            self.start_convo(self, conn, other_name)
        
     def initialize_elements(self, screen):
         self.ALIVE = True
@@ -54,6 +79,11 @@ class Pigeon_GUI:
 
         self.register.get_gui(self)
         self.register.register(self.name)
+
+        # init wait_connection_background here
+        self.conn_thread = threading.Thread(target=self.wait_connection_background) #stupid, needed?
+        self.wait_conn_thread = threading.Thread(target=self.wait_connection_background)
+        self.wait_conn_thread.start()
         
         self.start_input()
     
@@ -62,14 +92,33 @@ class Pigeon_GUI:
         while self.ALIVE:
             message = self.textbox.edit()
 
-            # put message in correct queue? probably this
-            # spawn correct thread?
+            if self.HANGUP:
+                self.HANGUP = False
+                self.in_conversation = False
+                self.communicator.THREAD_STAY_ALIVE = False
+                # join on any conversation thread
+                if self.wait_conn_thread.isAlive():
+                    self.wait_conn_thread.join()
+                elif self.conn_thread.isAlive():
+                    self.conn_thread.join()
+                # start new wait_connection_background thread
+                self.wait_conn_thread = threading.Thread(target=self.wait_connection_background)
+                self.wait_conn_thread.start()
+                self.system_pad.display("Chat ended at " + time.ctime(time.time()), "SYSTEM")
+            
             if message[0] == "/":
                 cmd = message.replace(" ", "").replace("\n", "")
                 if cmd  == "/quit":
                     self.msg_send.put(C.KILL)
                     if self.register.CONNECTED:
                         self.register.unregister(self.name)
+                    self.communicator.server_wait = False
+                    self.communicator.THREAD_STAY_ALIVE = False
+                    # join on conversation threads
+                    if self.wait_conn_thread.isAlive():
+                        self.wait_conn_thread.join()
+                    elif self.conn_thread.isAlive():
+                        self.conn_thread.join()
                     self.system_pad.display_message("Quitting.... goodbye!", "SYSTEM")
                     self.ALIVE = False
                     #time.sleep(1)
@@ -80,9 +129,28 @@ class Pigeon_GUI:
                         self.register.re_register(old_name, self.name)
                 elif cmd == "/connect":
                     # communicator needs to say this
-                    self.system_pad.display_message("Enter an IP or name", "SYSTEM")
-                    other = self.textbox.edit()
-                    self.system_pad.display_message("Can't connect to " + other, "SYSTEM")
+                    if not self.in_conversation:
+                        self.system_pad.display_message("Enter an IP or name", "SYSTEM")
+                        other = self.textbox.edit()
+                        # we want to spawn a thread here
+                        # to do connect_background
+                        self.THREAD_STAY_ALIVE = False         # kill threads just in case
+                        self.communicator.server_wait = False  # stop comm.wait_connection
+                        self.wait_conn_thread.join()           # join wait thread
+                        self.conn_thread = threading.Thread(target=self.connect_background, args=(other,))
+                        #self.system_pad.display_message("Can't connect to " + other, "SYSTEM")
+                        self.conn_thread.start()
+                    else:
+                        continue
+                elif cmd == "/hangup":
+                    if self.in_conversation:
+                        self.msg_send.put(C.KILL)
+                        # TODO this might kill send threat too early?
+                        #self.communicator.THREAD_STAY_ALIVE = False
+                        self.HANGUP = True
+                        self.chat_pad.display("You have disconnected, hit [ENTER] to leave", "SYSTEM")
+                    else:
+                        continue
                 elif cmd == "/online":
                     self.register.request_userlist(self.name)
                     self.userlist_win.clear()
@@ -103,8 +171,13 @@ class Pigeon_GUI:
                     self.system_pad.display_message("Invalid command!", "SYSTEM")
                     
             else:
-                self.system_pad.display_message(message, "You")
-                #self.msg_send.put(message)
+                if self.in_conversation:
+                    self.chat_pad.display_message(message, "You")
+                    self.msg_send.put(message)
+                else:
+                    continue
+                    #self.system_pad.display_message(message, "You")
+                    #self.msg_send.put(message)
             
 
 class Scroll_Pad:
