@@ -108,7 +108,7 @@ class Pigeon_GUI:
                 self.wait_conn_thread.start()
                 self.system_pad.display_message("Chat ended at " + time.ctime(time.time()), "SYSTEM")
             
-            if message[0] == "/":
+            if len(message) > 0 and message[0] == "/":
                 cmd = message.replace(" ", "").replace("\n", "")
                 if cmd  == "/quit":
                     self.msg_send.put(C.KILL)
