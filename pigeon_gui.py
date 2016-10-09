@@ -80,6 +80,8 @@ class Pigeon_GUI:
         self.config.get_gui(self)
         self.name = self.config.obtain_name()
 
+        self.system_pad.display_message(C.START_MSG, "SYSTEM")
+
         self.register.get_gui(self)
         self.register.register(self.name)
 
@@ -170,6 +172,8 @@ class Pigeon_GUI:
                 elif cmd == "/unregister":
                     self.register.unregister(self.config.name)
                     self.system_pad.display_message("Logged out of " + self.register.server_ip, "REGISTER")
+                elif cmd == "/commands":
+                    self.system_pad.display_message(C.COMMANDS, "SYSTEM")
                 else:
                     self.system_pad.display_message("Invalid command!", "SYSTEM")
                     

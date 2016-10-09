@@ -25,3 +25,16 @@ class Pigeon_Constants:
     ENTER = 10
     DEL = 127
     DEL_2 = 8
+
+    # other stuff
+    START_MSG = "Type /commands and hit [ENTER] for a list of commands!"
+    COMMANDS = """Commands begin with a '/'.
+Type a command and then hit [ENTER]
+/quit       ... quit pigeon
+/connect    ... connect to another user
+/hangup     ... end a conversation with another user
+/online     ... request a list of online users
+/register   ... register with a pigeon server
+/unregister ... unregister with a pigeon server
+/rename     ... change your name
+/commands   ... see a list of commands"""
