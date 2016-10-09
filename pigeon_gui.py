@@ -106,7 +106,7 @@ class Pigeon_GUI:
                 # start new wait_connection_background thread
                 self.wait_conn_thread = threading.Thread(target=self.wait_connection_background)
                 self.wait_conn_thread.start()
-                self.system_pad.display("Chat ended at " + time.ctime(time.time()), "SYSTEM")
+                self.system_pad.display_message("Chat ended at " + time.ctime(time.time()), "SYSTEM")
             
             if message[0] == "/":
                 cmd = message.replace(" ", "").replace("\n", "")
