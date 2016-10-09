@@ -20,7 +20,7 @@ class Pigeon_Config:
             config_file.close()
         except:
             self.display.display_message("No name found!", "CONFIG")
-            self.change_name_config()
+            name = self.change_name_config()
         self.name = name
         return name
 
