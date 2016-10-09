@@ -45,7 +45,7 @@ class Pigeon_GUI:
     def connect_background(self, ip):
         conn, other_name = self.communicator.attempt_connection(self.name, ip)
         if conn:
-            self.start_convo(self, conn, other_name)
+            self.start_convo(conn, other_name)
             conn.close()
         else:
             self.display_pad.display_message("Failed to connect to " + ip, "SYSTEM")
@@ -54,7 +54,7 @@ class Pigeon_GUI:
     def wait_connection_background(self):
         conn, other_name = self.communicator.wait_connection(self.name)
         if conn:
-            self.start_convo(self, conn, other_name)
+            self.start_convo(conn, other_name)
             conn.close()
        
     def initialize_elements(self, screen):
