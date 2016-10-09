@@ -58,7 +58,7 @@ class Communicator:
     # attempt to make a connection, and send our name on it
     def attempt_connection(self, name, ip):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
+        sock.settimeout(1)
         if self.register_agent.CONNECTED:
             if len(ip.split(".")) != 4:
                 # this is a name, not an IP, so search userlist
@@ -78,79 +78,3 @@ class Communicator:
         # wait for their name in return
         other_name = self.recv_other_name(sock)
         return (sock, other_name)
-
-    # get a user instruction and call the appropriate method
-    def handle_instructions(self, name):
-        print "(w)ait for connection, (c)onnect, change (n)ame, (r)equest userlist, or (q)uit: "
-        instruction = raw_input("(w/c/n/r/q): ")
-        if instruction == "w":
-            return self.wait_connection(name)
-        elif instruction == "c":
-            return self.attempt_connection(name)
-        elif instruction == "n":
-            old_name = config.name
-            config.change_name_config(name)
-            if self.register_agent.CONNECTED:
-                self.register_agent.re_register(old_name, config.name)
-            return (None, None)
-        elif instruction == "q":
-            self.QUIT = True
-            return (None, None)
-        elif instruction == "r":
-            if self.register_agent.CONNECTED:
-                self.register_agent.request_userlist(config.name)
-                self.register_agent.print_userlist()
-            else:
-                print "Not connected to server"
-            return (None, None)
-        else:
-            print "Invalid Command!"
-            return (None, None)
-
-    # start looping, taking user input
-    def start(self):
-        while self.connect_spawn_loop:
-            # establish connection to other user
-            conn, other_name = self.handle_instructions(config.name)
-            if self.QUIT:
-                print "Quitting....."
-                return
-            elif conn is not None:
-                # initialize GUI with connection and names
-                gui = Pigeon_GUI(conn, config.name, other_name)
-                # start gui execution
-                gui.start()
-                # gui has died, so close connection
-                conn.close()
-    
-if __name__ == '__main__':
-    print "Pigeon is starting!"
-    
-    # create config object and get username
-    config = Pigeon_Config()
-    username = config.obtain_name()
-    if len(sys.argv) > 1:
-        server = sys.argv[1]
-    else:
-        server = C.DEFAULT_SERVER
-    # create registry agent and try to register with default server
-    # TODO may want to break this out into a separate function
-    reg_agent = Pigeon_Register_Agent(server)
-    if reg_agent.register(config.name):
-        print "Registered with server at " + server + " as " + config.name
-        reg_agent.request_userlist(config.name)
-        reg_agent.print_userlist()
-    else:
-        print "Server at " + server + " unreachable, continuing without server"
-        
-    # create main program communicator and start it
-    comm = Communicator(config, reg_agent)
-    def kill_wait(*args):
-        comm.server_wait = False
-    signal.signal(signal.SIGINT, kill_wait)
-    comm.start()
-    
-    # after we're done, unregister from server
-    reg_agent.unregister(config.name)
-
-    print "Pigeon has quit!"

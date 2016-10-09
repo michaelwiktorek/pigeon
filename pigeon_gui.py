@@ -49,7 +49,7 @@ class Pigeon_GUI:
             self.start_convo(conn, other_name)
             conn.close()
         else:
-            self.display_pad.display_message("Failed to connect to " + ip, "SYSTEM")
+            self.system_pad.display_message("Failed to connect to " + ip, "SYSTEM")
             # notify user of failure to connect
 
     def wait_connection_background(self):

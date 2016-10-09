@@ -107,10 +107,4 @@ class Pigeon_Register_Agent:
             return self.send_wait_ack(name + ":" + C.UNREGISTER)
         else:
             return False
-
-if __name__ == "__main__":
-    agent = Pigeon_Register_Agent("127.0.0.1")
-    def signal_handler(*args):
-        agent.ALIVE = False
-    signal.signal(signal.SIGINT, signal_handler)
         
