@@ -150,7 +150,7 @@ class Pigeon_GUI:
                         # TODO this might kill send threat too early?
                         #self.communicator.THREAD_STAY_ALIVE = False
                         self.HANGUP = True
-                        self.chat_pad.display("You have disconnected, hit [ENTER] to leave", "SYSTEM")
+                        self.chat_pad.display_message("You have disconnected, hit [ENTER] to leave", "SYSTEM")
                     else:
                         continue
                 elif cmd == "/online":
