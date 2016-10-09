@@ -21,6 +21,14 @@ class Pigeon_GUI:
 
     def start_gui(self):
         curses.wrapper(self.initialize_elements)
+
+    def print_userlist(self, window):
+        self.userlist_win.border()
+        for addr in self.register.userlist.keys():
+            self.userlist_win.addstr(self.register.userlist[addr][0] + " at " + addr)
+            curs_y, curs_x = self.userlist_win.getyx()
+            self.userlist_win.move(curs_y+1, 0)
+        self.userlist_win.refresh()
        
     def initialize_elements(self, screen):
         self.ALIVE = True
@@ -36,9 +44,10 @@ class Pigeon_GUI:
         self.textbox = Simple_Textbox(3, scr_x, scr_y-3, 0)
 
         # display current list of users, maybe some commands
-        self.userlist = curses.newwin(2*scr_y/3, scr_x/3, 0, 2*scr_x/3)
-        self.userlist.border()
-        self.userlist.refresh()
+        self.userlist_win = curses.newwin(2*scr_y/3, scr_x/3, 0, 2*scr_x/3)
+        self.userlist_win.leaveok(0)
+        self.userlist_win.border()
+        self.userlist_win.refresh()
 
         self.config.get_gui(self)
         self.name = self.config.obtain_name()
@@ -75,6 +84,9 @@ class Pigeon_GUI:
                     other = self.textbox.edit()
                     self.system_pad.display_message("Can't connect to " + other, "SYSTEM")
                 elif cmd == "/online":
+                    self.register.request_userlist(self.name)
+                    self.userlist_win.clear()
+                    self.print_userlist(self.userlist_win)
                     self.system_pad.display_message("Userlist updated!", "SYSTEM")
                 elif cmd == "/register":
                     # TODO crashes if you enter improper address format
@@ -84,7 +96,9 @@ class Pigeon_GUI:
                         self.register.unregister(self.name)
                     self.register.set_server_ip(ip)
                     self.register.register(self.name)
-
+                elif cmd == "/unregister":
+                    self.register.unregister(self.config.name)
+                    self.system_pad.display_message("Logged out of " + self.register.server_ip, "REGISTER")
                 else:
                     self.system_pad.display_message("Invalid command!", "SYSTEM")
                     
