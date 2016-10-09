@@ -39,6 +39,7 @@ class Pigeon_GUI:
         self.other_name = other_name
         sender = threading.Thread(target=Pigeon_Threads.send_worker, args=(conn, self))
         sender.start()
+        self.chat_pad.display_message("Chat with " + other_name, "SYSTEM")
         Pigeon_Threads.receive_worker(conn, self)
         sender.join()
     
