@@ -185,11 +185,8 @@ class Pigeon_GUI:
                     self.chat_pad.display_message(message, "You")
                     self.msg_send.put(message)
                 else:
-                    self.system_pad.display_message(message, "You")                    
+                    #self.system_pad.display_message(message, "You")                    
                     continue
-                    #self.system_pad.display_message(message, "You")
-                    #self.msg_send.put(message)
-            
 
 class Scroll_Pad:
     def __init__(self, nrow, ncol, y, x):
