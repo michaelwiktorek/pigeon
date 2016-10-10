@@ -2,6 +2,7 @@ import threading
 import socket
 import curses
 import time
+import math
 import curses.textpad
 from Queue import Queue
 from pigeon_constants import Pigeon_Constants as C
@@ -77,11 +78,13 @@ class Pigeon_GUI:
         self.userlist_win.border()
         self.userlist_win.refresh()
 
+        # give the configurator a gui handle
         self.config.get_gui(self)
         self.name = self.config.obtain_name()
 
         self.system_pad.display_message(C.START_MSG, "SYSTEM")
 
+        # give the registrator a gui handle
         self.register.get_gui(self)
         self.register.register(self.name)
 
@@ -182,6 +185,7 @@ class Pigeon_GUI:
                     self.chat_pad.display_message(message, "You")
                     self.msg_send.put(message)
                 else:
+                    self.system_pad.display_message(message, "You")                    
                     continue
                     #self.system_pad.display_message(message, "You")
                     #self.msg_send.put(message)
@@ -205,14 +209,8 @@ class Scroll_Pad:
         self.display.refresh(self.scroll, 0, self.y, self.x, self.nrow, self.ncol)
 
     def display_message(self, message, name):
-        curs_y, curs_x = self.display.getyx()
         self.display.addstr(name + ": " + message)
-        if curs_y == self.nrow - 1:
-            self.scroll = self.scroll + 1
-            self.nrow = self.nrow + 1
-            self.display.resize(self.nrow + 1, self.ncol)
-        curs_y, curs_x = self.display.getyx()
-        self.display.move(curs_y+1, 0)
+        self.display.addch('\n')
         self.refresh()
 
 class Simple_Textbox:
