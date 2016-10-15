@@ -3,6 +3,7 @@ class Pigeon_Constants:
     SERVER_MAIN_PORT = 5554
     CLIENT_TEST_PORT = 5555
     CLIENT_MAIN_PORT = 1777
+    REGISTER_PORT    = 1791
 
     # messages
     ACK = "ack"

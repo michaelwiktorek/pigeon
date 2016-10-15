@@ -116,7 +116,7 @@ class upnp:
             ('NewInternalClient', ip),
             ('NewEnabled', '1'),
             ('NewRemoteHost', ip),   
-            ('NewPortMappingDescription', 'Test Description'),
+            ('NewPortMappingDescription', 'Pigeon Port Mapping'),
             ('NewLeaseDuration', '0')]
         
         request_xml = self.create_request_xml(self.ADD_PORT_MAPPING, arguments)
