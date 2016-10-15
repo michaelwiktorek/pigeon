@@ -11,6 +11,9 @@ from pigeon_constants import Pigeon_Constants as C
 
 class upnp:
     def __init__(self):
+        self.ADD_PORT_MAPPING = 'AddPortMapping'
+        self.DELETE_PORT_MAPPING = 'DeletePortMapping'
+        
         self.SSDP_ADDR = "239.255.255.250"
         self.SSDP_PORT = 1900
         self.SSDP_MX = 2
@@ -45,12 +48,13 @@ class upnp:
         dom = parseString(xml)
         service_types = dom.getElementsByTagName('serviceType')
         for service in service_types:
-            print service.childNodes[0].data
+            #print service.childNodes[0].data
             if service.childNodes[0].data.find('WANIPConnection') > 0:
                 path = service.parentNode.getElementsByTagName('controlURL')[0].childNodes[0].data
                 return path
 
-    def create_mapping_request(self, ext_port, int_port, ip, protocol):
+    #  Construct XML document to request router function
+    def create_request_xml(self, function, arguments):
         doc = Document()
 
         envelope = doc.createElementNS('', 's:Envelope')
@@ -59,18 +63,8 @@ class upnp:
 
         body = doc.createElementNS('', 's:Body')
 
-        fn = doc.createElementNS('', 'u:AddPortMapping')
+        fn = doc.createElementNS('', 'u:' + function)
         fn.setAttribute('xmlns:u', 'urn:schemas-upnp-org:service:WANIPConnection:1')
-
-        arguments = [
-            ('NewExternalPort', str(ext_port)),
-            ('NewProtocol', protocol),
-            ('NewInternalPort', str(int_port)),
-            ('NewInternalClient', ip),
-            ('NewEnabled', '1'),
-            ('NewRemoteHost', ip),   # I don't know what this is
-            ('NewPortMappingDescription', 'Test Description'),
-            ('NewLeaseDuration', '0')]
 
         argument_list = []
         for k, v in arguments:
@@ -89,33 +83,67 @@ class upnp:
         pure_xml = doc.toxml()
         return pure_xml
 
-    def send_request(self, router_path, request_xml, request_path):
-        conn = httplib.HTTPConnection(router_path.hostname, router_path.port)
+    #  Send XML request to router
+    def send_request(self, request_xml, function):
+        conn = httplib.HTTPConnection(self.parsed_url.hostname, self.parsed_url.port)
         conn.request('POST',
-                     request_path,
+                     self.request_path,
                      request_xml,
-                     {'SOAPAction': '"urn:schemas-upnp-org:service:WANIPConnection:1#AddPortMapping"',
+                     {'SOAPAction': '"urn:schemas-upnp-org:service:WANIPConnection:1#' + function + '"',
                       'Content-Type': 'text/xml'}
                      )
         resp = conn.getresponse()
         return resp
-        
 
+    #  Add port mapping
     def router_forward_port(self, ext_port, int_port, ip, protocol):
+        arguments = [
+            ('NewExternalPort', str(ext_port)),
+            ('NewProtocol', protocol),
+            ('NewInternalPort', str(int_port)),
+            ('NewInternalClient', ip),
+            ('NewEnabled', '1'),
+            ('NewRemoteHost', ip),   
+            ('NewPortMappingDescription', 'Test Description'),
+            ('NewLeaseDuration', '0')]
+        
+        request_xml = self.create_request_xml(self.ADD_PORT_MAPPING, arguments)
+        resp = self.send_request(request_xml, self.ADD_PORT_MAPPING)
+        return resp
+
+    #  Remove port mapping
+    def router_delete_port(self, ext_port, int_port, ip, protocol):
+        arguments = [
+            ('NewRemoteHost', ip),
+            ('NewExternalPort', str(ext_port)),
+            ('NewInternalPort', str(int_port)),
+            ('NewProtocol', protocol)]
+        
+        request_xml = self.create_request_xml(self.DELETE_PORT_MAPPING, arguments)
+        resp = self.send_request(request_xml, self.DELETE_PORT_MAPPING)
+        return resp
+
+    #  Establish UPnP device data 
+    def establish_upnp_data(self):
         resp = self.find_device()
-        url = self.get_data_url(resp)
-        parsed_url = self.parse_data_url(url)
-        xml = self.get_xml(url)
-        request_path = self.parse_xml(xml)
-        request_xml = self.create_mapping_request(ext_port, int_port, ip, protocol)
-        resp = self.send_request(parsed_url, request_xml, request_path)
+        self.url = self.get_data_url(resp)
+        self.parsed_url = self.parse_data_url(self.url)
+        xml = self.get_xml(self.url)
+        self.request_path = self.parse_xml(xml)
+
+    #  print router response
+    def print_response(self, resp):
         print resp.status
         print resp.read()
         
-    
 
 if __name__ == "__main__":
     local_ip = gethostbyname(gethostname())
     
     foo = upnp()
-    foo.router_forward_port(12345, 12345, local_ip, 'TCP')
+    foo.establish_upnp_data()
+
+    resp = foo.router_forward_port(9999, 9999, local_ip, 'TCP')
+    foo.print_response(resp)
+    resp = foo.router_delete_port(9999, 9999, local_ip, 'TCP')
+    foo.print_response(resp)
