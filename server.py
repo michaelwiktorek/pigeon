@@ -110,6 +110,9 @@ class Pigeon_Server:
         self.sock.close()
 
     def send_ack(self, address):
+        print ""
+        print "sending ack to " + address[0] + ":" + address[1]
+        print ""
         ack_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         ack_sock.sendto(C.ACK, (address[0], address[1]))
         ack_sock.close()
