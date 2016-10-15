@@ -109,14 +109,14 @@ class Pigeon_GUI:
 
         self.system_pad.display_message(C.START_MSG, "SYSTEM")
 
-        # give the registrator a gui handle
-        self.register.get_gui(self)
-        self.register.register(self.name)
-
         # try to forward ports with UPnP if we find a router
         self.system_pad.display_message("Checking if we need to forward ports...", "SYSTEM")
         self.upnp_open_ports()
         self.system_pad.display_message("Done", "SYSTEM")
+        
+        # give the registrator a gui handle
+        self.register.get_gui(self)
+        self.register.register(self.name)
 
         # init wait_connection_background here
         self.conn_thread = threading.Thread(target=self.wait_connection_background) #stupid, needed?
