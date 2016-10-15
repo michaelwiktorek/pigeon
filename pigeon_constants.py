@@ -16,7 +16,7 @@ class Pigeon_Constants:
     ONLINE_TIMEOUT_SECS = 10  # set to 60 or higher for production use
 
     # addresses
-    DEFAULT_SERVER = "127.0.0.1"
+    DEFAULT_SERVER = "www.michaelwiktorek.com"
 
     # names
     DEFAULT_NAME = "????"

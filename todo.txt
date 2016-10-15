@@ -1,14 +1,20 @@
 Stuff to implement:
 
-user names DONE 
-allow continued use after closing gui DONE
+DONE:
+user names 
+allow continued use after closing gui 
+better way of quitting gui program  
+config file with name 
+add upnp support for good P2P functionality 
+
+TODO:
+make sure the server gets the proper ip address (not local)
+  maybe switch to lan mode for local chat?
+stop program from crashing when you resize the terminal
 allow typing box to expand  [maybe impossible]
 add scrolling of text history
-better way of quitting gui program  DONE
-config file with name DONE
 refactor pigeon_gui
-add upnp support for good P2P functionality
+store list of names/ips
 
-wild'n'crazy:
-
-remember which ips can be connected to
+WILD'N'CRAZY:
+chat with multiple users at once

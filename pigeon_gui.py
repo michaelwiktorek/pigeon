@@ -114,7 +114,9 @@ class Pigeon_GUI:
         self.register.register(self.name)
 
         # try to forward ports with UPnP if we find a router
+        self.system_pad.display_message("Checking if we need to forward ports...", "SYSTEM")
         self.upnp_open_ports()
+        self.system_pad.display_message("Done", "SYSTEM")
 
         # init wait_connection_background here
         self.conn_thread = threading.Thread(target=self.wait_connection_background) #stupid, needed?
@@ -145,6 +147,7 @@ class Pigeon_GUI:
             if len(message) > 0 and message[0] == "/":
                 cmd = message.replace(" ", "").replace("\n", "")
                 if cmd  == "/quit":
+                    self.system_pad.display_message("Quitting...", "SYSTEM")
                     self.msg_send.put(C.KILL)
                     if self.register.CONNECTED:
                         self.register.unregister(self.name)
@@ -188,12 +191,16 @@ class Pigeon_GUI:
                         self.HANGUP = True
                         self.chat_pad.display_message("You have disconnected, hit [ENTER] to leave", "SYSTEM")
                     else:
+                        self.system_pad.display_message("Not in a conversation!", "SYSTEM")
                         continue
                 elif cmd == "/online":
-                    self.register.request_userlist(self.name)
-                    self.userlist_win.clear()
-                    self.print_userlist(self.userlist_win)
-                    self.system_pad.display_message("Userlist updated!", "SYSTEM")
+                    if self.register.CONNECTED:
+                        self.register.request_userlist(self.name)
+                        self.userlist_win.clear()
+                        self.print_userlist(self.userlist_win)
+                        self.system_pad.display_message("Userlist updated!", "SYSTEM")
+                    else:
+                        self.system_pad.display_message("Not registered with server!", "REGISTER")
                 elif cmd == "/register":
                     # TODO crashes if you enter improper address format
                     self.system_pad.display_message("Type an IP address and hit [ENTER]", "SYSTEM")
@@ -203,8 +210,12 @@ class Pigeon_GUI:
                     self.register.set_server_ip(ip)
                     self.register.register(self.name)
                 elif cmd == "/unregister":
-                    self.register.unregister(self.config.name)
-                    self.system_pad.display_message("Logged out of " + self.register.server_ip, "REGISTER")
+                    if self.register.CONNECTED:
+                        self.register.unregister(self.config.name)
+                        self.system_pad.display_message("Logged out of " + self.register.server_ip, "REGISTER")
+                    else:
+                        self.system_pad.display_message("Not registered with server!", "REGISTER")
+                        continue
                 elif cmd == "/commands":
                     self.system_pad.display_message(C.COMMANDS, "SYSTEM")
                 else:

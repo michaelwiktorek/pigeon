@@ -29,6 +29,7 @@ class Pigeon_Server:
         pruning_thread.start()
         
         self.recv_loop_UDP()
+        pruning_thread.join()
 
     def print_online_users(self):
         print str(len(self.online_users)) + " Users Online: "
@@ -126,4 +127,4 @@ if __name__ == "__main__":
     
     server.start()
 
-    print "main thread has died"
+    print "Prune thread joined, main thread dying now!"
