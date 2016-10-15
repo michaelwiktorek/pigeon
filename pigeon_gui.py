@@ -37,19 +37,25 @@ class Pigeon_GUI:
             self.UPNP_PORTS_FORWARDED = True
             res1 = self.upnp.router_forward_port(C.CLIENT_TEST_PORT, C.CLIENT_TEST_PORT, self.local_ip, 'UDP')
             res2 = self.upnp.router_forward_port(C.CLIENT_MAIN_PORT, C.CLIENT_MAIN_PORT, self.local_ip, 'TCP')
+            res3 = self.upnp.router_forward_port(C.REGISTER_PORT, C.CLIENT_REGISTER_PORT,self.local_ip, 'UDP')
             if int(res1.status) == 500:
                 self.system_pad.display_message("Failed to forward test port", "SYSTEM")
             if int(res2.status) == 500:
                 self.system_pad.display_message("Failed to forward listen port", "SYSTEM")
+            if int(res3.status) == 500:
+                self.system_pad.display_message("Failed to forward register port", "SYSTEM")
 
     def upnp_close_ports(self):
         if self.UPNP_PORTS_FORWARDED:
             res1 = self.upnp.router_delete_port(C.CLIENT_TEST_PORT, C.CLIENT_TEST_PORT, self.local_ip, 'UDP')
             res2 = self.upnp.router_delete_port(C.CLIENT_MAIN_PORT, C.CLIENT_MAIN_PORT, self.local_ip, 'TCP')
+            res3 = self.upnp.router_delete_port(C.CLIENT_REGISTER_PORT,C.CLIENT_REGISTER_PORT,self.local_ip, 'UDP')
             if int(res1.status) == 500:
                 self.system_pad.display_message("Failed to close test port", "SYSTEM")
             if int(res2.status) == 500:
                 self.system_pad.display_message("Failed to close listen port", "SYSTEM")
+            if int(res3.status) == 500:
+                self.system_pad.display_message("Failed to close register port", "SYSTEM")
 
     def print_userlist(self, window):
         self.userlist_win.border()

@@ -29,7 +29,7 @@ class Pigeon_Register_Agent:
         send_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         # send message, await ack and resend message until ack
         # bind to client main port (is this allowed?)  NOOO
-        send_sock.bind((self.HOST, C.REGISTER_PORT))
+        send_sock.bind((self.HOST, C.CLIENT_REGISTER_PORT))
         send_sock.sendto(message, (self.server_ip, C.SERVER_MAIN_PORT))
         send_sock.settimeout(1)
         attempts_made = 0
