@@ -162,7 +162,7 @@ if __name__ == "__main__":
     if not foo.establish_upnp_data():
         print "No response from router. Is UPnP enabled?"
     else:
-        resp = foo.router_forward_port(9999, 9999, local_ip, 'TCP')
-        foo.print_response(resp)
-        #resp = foo.router_delete_port(9999, 9999, local_ip, 'TCP')
+        #resp = foo.router_forward_port(9999, 9999, local_ip, 'TCP')
         #foo.print_response(resp)
+        resp = foo.router_delete_port(9999, 9999, local_ip, 'TCP')
+        foo.print_response(resp)

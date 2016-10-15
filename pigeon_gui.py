@@ -7,6 +7,7 @@ import curses.textpad
 from Queue import Queue
 from pigeon_constants import Pigeon_Constants as C
 from pigeon_threads import Pigeon_Threads
+from upnp import upnp   # my very own upnp library :D
 
 class Pigeon_GUI:
     def __init__(self, config, register, communicator):
@@ -18,6 +19,8 @@ class Pigeon_GUI:
         self.communicator = communicator
         self.in_conversation = False
         self.HANGUP = False
+        self.UPNP_PORTS_FORWARDED = False
+        self.local_ip = socket.gethostbyname(socket.gethostname())
 
     def start_input(self):
         self.input_loop()
@@ -25,6 +28,28 @@ class Pigeon_GUI:
 
     def start_gui(self):
         curses.wrapper(self.initialize_elements)
+
+    def upnp_open_ports(self):
+        self.upnp = upnp()
+        if not self.upnp.establish_upnp_data():
+            self.system_pad.display_message("No router detected. UPnP disabled, or no router exists", "SYSTEM")
+        else:
+            self.UPNP_PORTS_FORWARDED = True
+            res1 = self.upnp.router_forward_port(C.CLIENT_TEST_PORT, C.CLIENT_TEST_PORT, self.local_ip, 'UDP')
+            res2 = self.upnp.router_forward_port(C.CLIENT_MAIN_PORT, C.CLIENT_MAIN_PORT, self.local_ip, 'TCP')
+            if int(res1.status) == 500:
+                self.system_pad.display_message("Failed to forward test port", "SYSTEM")
+            if int(res2.status) == 500:
+                self.system_pad.display_message("Failed to forward listen port", "SYSTEM")
+
+    def upnp_close_ports(self):
+        if self.UPNP_PORTS_FORWARDED:
+            res1 = self.upnp.router_delete_port(C.CLIENT_TEST_PORT, C.CLIENT_TEST_PORT, self.local_ip, 'UDP')
+            res2 = self.upnp.router_delete_port(C.CLIENT_MAIN_PORT, C.CLIENT_MAIN_PORT, self.local_ip, 'TCP')
+            if int(res1.status) == 500:
+                self.system_pad.display_message("Failed to close test port", "SYSTEM")
+            if int(res2.status) == 500:
+                self.system_pad.display_message("Failed to close listen port", "SYSTEM")
 
     def print_userlist(self, window):
         self.userlist_win.border()
@@ -88,6 +113,9 @@ class Pigeon_GUI:
         self.register.get_gui(self)
         self.register.register(self.name)
 
+        # try to forward ports with UPnP if we find a router
+        self.upnp_open_ports()
+
         # init wait_connection_background here
         self.conn_thread = threading.Thread(target=self.wait_connection_background) #stupid, needed?
         self.wait_conn_thread = threading.Thread(target=self.wait_connection_background)
@@ -127,6 +155,8 @@ class Pigeon_GUI:
                         self.wait_conn_thread.join()
                     elif self.conn_thread.isAlive():
                         self.conn_thread.join()
+                    # close ports, if any were opened
+                    self.upnp_close_ports()
                     self.system_pad.display_message("Quitting.... goodbye!", "SYSTEM")
                     self.ALIVE = False
                     #time.sleep(1)
