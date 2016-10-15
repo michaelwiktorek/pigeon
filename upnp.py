@@ -1,4 +1,5 @@
-# credit to http://mattscodecave.com/posts/using-python-and-upnp-to-forward-a-port.html
+# mostly adapted from a nice tutorial located at
+# http://mattscodecave.com/posts/using-python-and-upnp-to-forward-a-port.html
 
 from socket import *
 import re
@@ -7,7 +8,6 @@ import httplib
 from urlparse import urlparse
 from xml.dom.minidom import parseString
 from xml.dom.minidom import Document
-from pigeon_constants import Pigeon_Constants as C
 
 class upnp:
     def __init__(self):
@@ -19,6 +19,9 @@ class upnp:
         self.SSDP_MX = 2
         self.SSDP_ST = "urn:schemas-upnp-org:device:InternetGatewayDevice:1"
 
+        self.MAX_ATTEMPTS = 2
+        self.TIMEOUT = 1
+
     # TODO handle case: multiple responses
     def find_device(self):
         ssdp_request = "M-SEARCH * HTTP/1.1\r\n" + \
@@ -28,7 +31,16 @@ class upnp:
                        "ST: %s\r\n" % (self.SSDP_ST, ) + "\r\n"
         sock = socket(AF_INET, SOCK_DGRAM)
         sock.sendto(ssdp_request, (self.SSDP_ADDR, self.SSDP_PORT))
-        resp = sock.recv(1024)
+        sock.settimeout(self.TIMEOUT)
+        attempts = 0
+        resp = False
+        while attempts < self.MAX_ATTEMPTS:
+            try:
+                resp = sock.recv(1024)
+                break
+            except:
+                attempts += 1
+                continue
         sock.close()
         return resp
 
@@ -123,13 +135,18 @@ class upnp:
         resp = self.send_request(request_xml, self.DELETE_PORT_MAPPING)
         return resp
 
-    #  Establish UPnP device data 
+    #  Establish UPnP device data
+    #  returns: True if we found a router
+    #           False if the router never responded
     def establish_upnp_data(self):
         resp = self.find_device()
+        if not resp:
+            return False
         self.url = self.get_data_url(resp)
         self.parsed_url = self.parse_data_url(self.url)
         xml = self.get_xml(self.url)
         self.request_path = self.parse_xml(xml)
+        return True
 
     #  print router response
     def print_response(self, resp):
@@ -138,12 +155,14 @@ class upnp:
         
 
 if __name__ == "__main__":
+    # some quick test junk
     local_ip = gethostbyname(gethostname())
     
     foo = upnp()
-    foo.establish_upnp_data()
-
-    resp = foo.router_forward_port(9999, 9999, local_ip, 'TCP')
-    foo.print_response(resp)
-    resp = foo.router_delete_port(9999, 9999, local_ip, 'TCP')
-    foo.print_response(resp)
+    if not foo.establish_upnp_data():
+        print "No response from router. Is UPnP enabled?"
+    else:
+        resp = foo.router_forward_port(9999, 9999, local_ip, 'TCP')
+        foo.print_response(resp)
+        #resp = foo.router_delete_port(9999, 9999, local_ip, 'TCP')
+        #foo.print_response(resp)
