@@ -41,6 +41,8 @@ class Pigeon_Server:
             self.userlist_lock.acquire()
             print "pruning offline users"
             prune_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            # bind to server main port (is this allowed?)
+            prune_socket.bind((self.HOST, C.SERVER_MAIN_PORT))
             prune_socket.settimeout(2) # allow 2 secs for a response
             # THIS COULD BE VERY WEIRD WITH THREADS, LOOK INTO IT
             # mark unresponsive clients for deletion
@@ -55,6 +57,9 @@ class Pigeon_Server:
                         continue
                 except:
                     self.online_users[addr] = None
+                    
+            # close socket
+            prune_socket.close()
 
             # remove unresponsive clients from list
             for addr in self.online_users.keys():
