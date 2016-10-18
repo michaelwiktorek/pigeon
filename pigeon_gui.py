@@ -82,6 +82,8 @@ class Pigeon_GUI:
             conn.close()
         else:
             self.system_pad.display_message("Failed to connect to " + ip, "SYSTEM")
+            self.wait_conn_thread = threading.Thread(target=self.wait_connection_background)
+            self.wait_conn_thread.start()
             # notify user of failure to connect
 
     def wait_connection_background(self):
@@ -181,7 +183,7 @@ class Pigeon_GUI:
                         other = self.textbox.edit()
                         # we want to spawn a thread here
                         # to do connect_background
-                        self.THREAD_STAY_ALIVE = False         # kill threads just in case
+                        #self.THREAD_STAY_ALIVE = False         # kill threads just in case
                         self.communicator.server_wait = False  # stop comm.wait_connection
                         self.wait_conn_thread.join()           # join wait thread
                         self.conn_thread = threading.Thread(target=self.connect_background, args=(other,))
