@@ -50,7 +50,7 @@ class Pigeon_Register_Agent:
                     attempts_made = 0
                     return mesg
             except:
-                self.display.display_message("Calling server...", "REGISTER")
+                self.display.display_message("No response from server...", "REGISTER")
                 continue
         send_sock.close()
         attempts_made = 0
