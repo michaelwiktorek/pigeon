@@ -58,6 +58,8 @@ class Communicator:
     # attempt to make a connection, and send our name on it
     def attempt_connection(self, name, ip):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind((self.HOST, C.CLIENT_MAIN_PORT))
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.settimeout(1)
         if self.register_agent.CONNECTED:
             if len(ip.split(".")) != 4:
