@@ -115,7 +115,7 @@ class upnp:
             ('NewInternalPort', str(int_port)),
             ('NewInternalClient', ip),
             ('NewEnabled', '1'),
-            ('NewRemoteHost', ip),   
+            ('NewRemoteHost', ""),   
             ('NewPortMappingDescription', 'Pigeon Port Mapping'),
             ('NewLeaseDuration', '0')]
         
@@ -126,7 +126,7 @@ class upnp:
     #  Remove port mapping
     def router_delete_port(self, ext_port, int_port, ip, protocol):
         arguments = [
-            ('NewRemoteHost', ip),
+            ('NewRemoteHost', ""),
             ('NewExternalPort', str(ext_port)),
             ('NewInternalPort', str(int_port)),
             ('NewProtocol', protocol)]
@@ -145,6 +145,7 @@ class upnp:
         self.url = self.get_data_url(resp)
         self.parsed_url = self.parse_data_url(self.url)
         xml = self.get_xml(self.url)
+        print xml
         self.request_path = self.parse_xml(xml)
         return True
 
@@ -162,7 +163,8 @@ if __name__ == "__main__":
     if not foo.establish_upnp_data():
         print "No response from router. Is UPnP enabled?"
     else:
+        print "router said hello"
         #resp = foo.router_forward_port(9999, 9999, local_ip, 'TCP')
         #foo.print_response(resp)
-        resp = foo.router_delete_port(9999, 9999, local_ip, 'TCP')
-        foo.print_response(resp)
+        #resp = foo.router_delete_port(9999, 9999, local_ip, 'TCP')
+        #foo.print_response(resp)
