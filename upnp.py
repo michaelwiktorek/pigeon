@@ -145,7 +145,7 @@ class upnp:
         self.url = self.get_data_url(resp)
         self.parsed_url = self.parse_data_url(self.url)
         xml = self.get_xml(self.url)
-        print xml
+        #print xml
         self.request_path = self.parse_xml(xml)
         return True
 
