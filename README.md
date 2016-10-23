@@ -8,5 +8,4 @@ To run the program, type "python main.py".
 
 To run the server, type "python server.py".
 
-At this moment Pigeon does not support chatting with multiple other users at once. It also does not support UPnP, so you may need to forward ports if your client or server are running behind a router.
-
+At this moment Pigeon does not support chatting with multiple other users at once. 
