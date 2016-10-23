@@ -95,10 +95,10 @@ class Pigeon_Register_Agent:
             #print "Starting keep_alive thread at port " + str(C.CLIENT_TEST_PORT)
             self.keep_alive_thread = threading.Thread(target=self.keep_alive)
             self.keep_alive_thread.start()
-            self.display.display_message("Connected to " + self.server_ip + " as " + name, "REGISTER")
+            self.display.display_message("Registered with " + self.server_ip + " as " + name, "REGISTER")
             return True
         else:
-            self.display.display_message("Failed to connect to " + self.server_ip, "REGISTER")
+            self.display.display_message("Failed to register with server at " + self.server_ip, "REGISTER")
             return False
 
     def unregister(self, name):

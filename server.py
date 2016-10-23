@@ -60,7 +60,6 @@ class Pigeon_Server:
                 if self.online_users[addr] is None:
                     del self.online_users[addr]
 
-            self.print_online_users()
             self.userlist_lock.release()
             
             # is this idiotic? I think so
@@ -68,7 +67,8 @@ class Pigeon_Server:
                 if not self.ALIVE:
                     break  # let me die
                 time.sleep(1)
-        print "pruning thread has died"
+
+        print ("...")
 
     def recv_loop_UDP(self):
         while self.ALIVE:
