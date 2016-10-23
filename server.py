@@ -29,6 +29,7 @@ class Pigeon_Server:
         pruning_thread.start()
         
         self.recv_loop_UDP()
+        self.sock.close()
         pruning_thread.join()
 
     def print_online_users(self):
@@ -39,7 +40,7 @@ class Pigeon_Server:
     def prune_users(self):
         while self.ALIVE:
             self.userlist_lock.acquire()
-            print "pruning offline users"
+            #print "pruning offline users"
             prune_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             # bind to server main port (is this allowed?)  NO
             prune_socket.bind((self.HOST, C.SERVER_REGISTER_PORT))
@@ -53,7 +54,7 @@ class Pigeon_Server:
                     if mesg == C.ACK:
                         # update time # actually don't
                         #self.online_users[addr][1] = time.time()
-                        print self.online_users[addr][0] + " is still online"
+                        #print self.online_users[addr][0] + " is still online"
                         continue
                 except:
                     self.online_users[addr] = None
@@ -106,14 +107,10 @@ class Pigeon_Server:
                 list_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 list_sock.sendto(userlist, (client_addr, client_port))
                 list_sock.close()
-            else:
-                continue # not strictly necessary
             
             self.print_online_users()
             self.userlist_lock.release()
             
-        self.sock.close()
-
     def send_ack(self, address):
         print ""
         print "sending ack to " + address[0] + ":" + str(address[1])
