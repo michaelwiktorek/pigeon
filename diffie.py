@@ -29,19 +29,19 @@ class Diffie:
                 return prime
         return prime
 
-    def DH_private_key(self):
+    def private_key(self):
         # This is where our security comes from
         # Number of bytes we can send scales with PRIV_LEN_BYTES 
         num = int(os.urandom(self.PRIV_LEN_BYTES).encode('hex'), 16)
         self.DH_private_key = num
         return self.DH_private_key
 
-    def DH_public_key(self):
+    def public_key(self):
         self.DH_private_key()
         self.DH_public_key = pow(self.DH_BASE, self.DH_private_key, self.DH_PRIME_3072)
         return self.DH_public_key
 
-    def DH_shared_secret(self, other_pub_key):
+    def shared_secret(self, other_pub_key):
         self.shared_secret = pow(other_pub_key, self.DH_private_key, self.DH_PRIME_3072)
         return self.shared_secret
         
@@ -50,6 +50,6 @@ if __name__ == "__main__":
     foo = Diffie()
     bar = Diffie()
     #print foo.prob_safe_prime(random.getrandbits(2048))
-    A = foo.DH_public_key()
-    B = bar.DH_public_key()
-    print foo.DH_shared_secret(B) == bar.DH_shared_secret(A)
+    A = foo.public_key()
+    B = bar.public_key()
+    print foo.shared_secret(B) == bar.shared_secret(A)
