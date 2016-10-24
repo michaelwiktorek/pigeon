@@ -7,6 +7,7 @@ class Pigeon_Threads:
         while gui.communicator.THREAD_STAY_ALIVE:
             try:
                 message = gui.msg_send.get(block=True, timeout=1)
+                # we could try send/recv public keys here
                 sock.sendall(message)
                 #if message == C.KILL:
                     #gui.chat_pad.display_message("You have disconnected, goodbye!", "**SYSTEM**")
