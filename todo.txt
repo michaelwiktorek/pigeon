@@ -18,3 +18,15 @@ store list of names/ips
 
 WILD'N'CRAZY:
 chat with multiple users at once
+
+
+Bugs:
+
+connect fail bug:
+	other end connects, you hangup, you cannot reach other end anymore
+
+rsa chat length:
+    	long message becomes gibberish, calculate length and break up message
+
+resize window bug:
+       fatal program crash when window is resized
