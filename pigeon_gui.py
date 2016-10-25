@@ -116,22 +116,21 @@ class Pigeon_GUI:
         self.config.get_gui(self)
         self.name = self.config.obtain_name()
 
-        self.system_pad.display_message(C.START_MSG, "SYSTEM")
-
         # try to forward ports with UPnP if we find a router
-        self.system_pad.display_message("Checking if we need to forward ports...", "SYSTEM")
+        self.system_pad.display_message("Forwarding router ports...", "SYSTEM")
         self.upnp_open_ports()
-        self.system_pad.display_message("Done", "SYSTEM")
 
         # create an RSA and generate a new keypair, hand to communicator
         self.system_pad.display_message("Generating RSA keypair...", "SYSTEM")
         self.rsa = RSA()
         self.communicator.get_rsa(self.rsa)
-        self.system_pad.display_message("Done", "SYSTEM")
         
         # give the registrator a gui handle
         self.register.get_gui(self)
         self.register.register(self.name)
+
+        self.system_pad.display_message("Welcome, " + self.name, "SYSTEM")
+        self.system_pad.display_message(C.START_MSG, "SYSTEM")
 
         # init wait_connection_background here
         self.conn_thread = threading.Thread(target=self.wait_connection_background) #stupid, needed?

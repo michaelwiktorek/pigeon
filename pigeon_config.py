@@ -16,7 +16,6 @@ class Pigeon_Config:
         try:
             config_file = open("pigeon.conf", 'r')
             name = config_file.readline().replace("\n", "")
-            self.display.display_message("Welcome, " + name, "CONFIG")
             config_file.close()
         except:
             self.display.display_message("No name found!", "CONFIG")
