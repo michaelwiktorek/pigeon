@@ -8,6 +8,7 @@ from Queue import Queue
 from pigeon_constants import Pigeon_Constants as C
 from pigeon_threads import Pigeon_Threads
 from upnp import upnp   # my very own upnp library :D
+from rsa import RSA
 
 class Pigeon_GUI:
     def __init__(self, config, register, communicator):
@@ -120,6 +121,12 @@ class Pigeon_GUI:
         # try to forward ports with UPnP if we find a router
         self.system_pad.display_message("Checking if we need to forward ports...", "SYSTEM")
         self.upnp_open_ports()
+        self.system_pad.display_message("Done", "SYSTEM")
+
+        # create an RSA and generate a new keypair, hand to communicator
+        self.system_pad.display_message("Generating RSA keypair...", "SYSTEM")
+        self.rsa = RSA()
+        self.communicator.get_rsa(self.rsa)
         self.system_pad.display_message("Done", "SYSTEM")
         
         # give the registrator a gui handle

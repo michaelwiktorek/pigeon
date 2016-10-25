@@ -5,6 +5,7 @@ from pigeon_threads import Pigeon_Threads
 from pigeon_config import Pigeon_Config
 from pigeon_constants import Pigeon_Constants as C
 from pigeon_register_agent import Pigeon_Register_Agent
+from rsa import RSA
 
 if __name__ == "__main__":
     # create communicator
@@ -12,7 +13,7 @@ if __name__ == "__main__":
     # create GUI
 
     config = Pigeon_Config()
-        
+
     register_agent = Pigeon_Register_Agent(sys.argv)
 
     communicator = Communicator(config, register_agent)

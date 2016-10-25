@@ -2,6 +2,30 @@ import os
 
 # Helpful cryptographic utilities
 class Crypto_Util:
+
+    @staticmethod
+    def rand_prob_prime(length_bytes):
+        return Crypto_Util.prob_prime(Crypto_Util.rand_bytes(length_bytes))
+
+    # The next two methods are from stack overflow
+    # learn how the damn euclidean thing works
+    # http://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python
+    @staticmethod
+    def egcd(a, b):
+        if a == 0:
+            return (b, 0, 1)
+        else:
+            g, y, x = Crypto_Util.egcd(b % a, a)
+            return (g, x - (b // a) * y, y)
+
+    @staticmethod
+    def mod_mult_inv(a, m):
+        g, x, y = Crypto_Util.egcd(a, m)
+        if g != 1:
+            raise Exception('modular inverse does not exist')
+        else:
+            return x % m
+    
     @staticmethod
     def rand_bytes(length_bytes):
         return int(os.urandom(length_bytes).encode('hex'), 16)
@@ -41,4 +65,5 @@ class Crypto_Util:
         return prime
 
 if __name__ == "__main__":
-    print Crypto_Util.prob_safe_prime(Crypto_Util.rand_bytes(32))
+    #print Crypto_Util.prob_safe_prime(Crypto_Util.rand_bytes(32))
+    print Crypto_Util.prob_prime(Crypto_Util.rand_bytes(128))

@@ -19,12 +19,21 @@ class Communicator:
         self.QUIT = False
 
     # listen for other user's name on socket
-    def recv_other_name(self, sock):
-        other_name = None
-        while not other_name:
+    def recv_other_data(self, sock):
+        other_data = None
+        while not other_data:
             # TODO maybe stop after a few tries
-            other_name = sock.recv(1024)
-        return other_name
+            other_data = sock.recv(1024)
+        split_data = other_data.split(":")
+        other_name = split_data[0]
+        pubkey = (int(split_data[1]), int(split_data[2]))
+        return (other_name, pubkey)
+
+    # get an rsa object god this needs refactoring, also gen keypair
+    def get_rsa(self, rsa):
+        self.rsa = rsa
+        self.rsa.gen_keypair()
+        self.n, self.e = self.rsa.get_public_key()
 
     # wait for a connection, and send our name on it
     def wait_connection(self, name):
@@ -50,9 +59,11 @@ class Communicator:
             return (None, None)
         conn.settimeout(self.TIMEOUT)
         # wait for other user's name
-        other_name = self.recv_other_name(conn)
+        other_name, pub_key = self.recv_other_data(conn)
+        self.rsa.get_other_pub_key(pub_key)
         # send our name back to other user
-        conn.sendall(name)
+        data = name + ":" + str(self.n) + ":" + str(self.e)
+        conn.sendall(data)
         return (conn, other_name)
 
     # attempt to make a connection, and send our name on it
@@ -75,8 +86,10 @@ class Communicator:
             return (None, None)
         sock.settimeout(self.TIMEOUT)
 
-        #send our name to the other user
-        sock.sendall(name)
+        #send data to the other user
+        data = name + ":" + str(self.n) + ":" + str(self.e)
+        sock.sendall(data)
         # wait for their name in return
-        other_name = self.recv_other_name(sock)
+        other_name, pub_key = self.recv_other_data(sock)
+        self.rsa.get_other_pub_key(pub_key)
         return (sock, other_name)
