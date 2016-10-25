@@ -128,6 +128,10 @@ class Pigeon_GUI:
         # give the registrator a gui handle
         self.register.get_gui(self)
         self.register.register(self.name)
+        if self.register.CONNECTED:
+            self.register.request_userlist(self.name)
+            self.userlist_win.clear()
+            self.print_userlist(self.userlist_win)
 
         self.system_pad.display_message("Welcome, " + self.name, "SYSTEM")
         self.system_pad.display_message(C.START_MSG, "SYSTEM")
@@ -223,6 +227,10 @@ class Pigeon_GUI:
                         self.register.unregister(self.name)
                     self.register.set_server_ip(ip)
                     self.register.register(self.name)
+                    if self.register.CONNECTED:
+                        self.register.request_userlist(self.name)
+                        self.userlist_win.clear()
+                        self.print_userlist(self.userlist_win)
                 elif cmd == "/unregister":
                     if self.register.CONNECTED:
                         self.register.unregister(self.config.name)

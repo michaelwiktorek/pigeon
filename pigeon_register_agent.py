@@ -32,7 +32,6 @@ class Pigeon_Register_Agent:
         send_sock.sendto(message, (self.server_ip, C.SERVER_MAIN_PORT))
         send_sock.settimeout(1)
         attempts_made = 0
-        self.display.display_message("Calling registration server...", "REGISTER")
         while attempts_made < self.MAX_ATTEMPTS:
             try:
                 attempts_made = attempts_made + 1
@@ -84,6 +83,7 @@ class Pigeon_Register_Agent:
 
 
     def register(self, name):
+        self.display.display_message("Calling registration server...", "REGISTER")
         if self.send_wait_ack(name + ":" + C.REGISTER):
             self.ALIVE = True
             self.CONNECTED = True
