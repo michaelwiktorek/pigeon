@@ -8,7 +8,8 @@ class Pigeon_Threads:
             try:
                 message = gui.msg_send.get(block=True, timeout=1)
                 # we could try send/recv public keys here
-                sock.sendall(message)
+                msg_cipher = gui.rsa.encrypt_known(message)
+                sock.sendall(msg_cipher)
                 #if message == C.KILL:
                     #gui.chat_pad.display_message("You have disconnected, goodbye!", "**SYSTEM**")
             except:
