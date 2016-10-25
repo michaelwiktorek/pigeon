@@ -10,6 +10,8 @@ class Pigeon_Threads:
                 # we could try send/recv public keys here
                 if message != C.KILL:
                     msg_cipher = str(gui.rsa.encrypt_known(message))
+                else:
+                    msg_cipher = message
                 sock.sendall(msg_cipher)
             except:
                 continue # we can do something here maybe
