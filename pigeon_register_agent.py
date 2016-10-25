@@ -14,7 +14,7 @@ class Pigeon_Register_Agent:
             self.server_ip = argv[1]
         else:
             self.server_ip = C.DEFAULT_SERVER
-        self.MAX_ATTEMPTS = 2
+        self.MAX_ATTEMPTS = 1
         self.ALIVE = True
 
     def set_server_ip(self, ip):
