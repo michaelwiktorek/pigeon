@@ -8,4 +8,4 @@ To run the program, type "python main.py".
 
 To run the server, type "python server.py".
 
-At this moment Pigeon does not support chatting with multiple other users at once. 
+Pigeon generates an RSA keypair when it starts up and uses this to encrypt messages. However, it is probably not cryptographically secure. At this moment Pigeon does not support chatting with multiple other users at once. 
