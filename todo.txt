@@ -5,11 +5,11 @@ user names
 allow continued use after closing gui 
 better way of quitting gui program  
 config file with name 
-add upnp support for good P2P functionality 
+add upnp support for good P2P functionality
+make sure the server gets the proper ip address
+add per-session RSA encryption to messaging
 
 TODO:
-make sure the server gets the proper ip address (not local)
-  maybe switch to lan mode for local chat?
 stop program from crashing when you resize the terminal
 allow typing box to expand  [maybe impossible]
 add scrolling of text history
