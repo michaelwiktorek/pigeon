@@ -1,4 +1,5 @@
 import threading
+import signal
 import socket
 import curses
 import time
@@ -92,10 +93,21 @@ class Pigeon_GUI:
         if conn:
             self.start_convo(conn, other_name)
             conn.close()
+
+    def resize_handler(self):
+        scr_y, scr_x = self.screen.getmaxyx()
+        self.chat_pad.resize(2*scr_y/3, 2*scr_x/3)
+        self.system_pad.resize(2*scr_y/3, 2*scr_x/3)
+        self.userlist_win.resize(2*scr_y/3, scr_x/3)
+        self.chat_pad.refresh()
+        self.system_pad.refresh()
+        self.userlist_win.refresh()
+        curses.resizeterm(scr_y, scr_x)
        
     def initialize_elements(self, screen):
         self.ALIVE = True
-        scr_y, scr_x = screen.getmaxyx()
+        self.screen = screen
+        scr_y, scr_x = self.screen.getmaxyx()
         
         # we display chat history in the display_pad
         self.chat_pad = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
@@ -111,6 +123,8 @@ class Pigeon_GUI:
         self.userlist_win.leaveok(0)
         self.userlist_win.border()
         self.userlist_win.refresh()
+
+        #signal.signal(signal.SIGWINCH, self.resize_handler)
 
         # give the configurator a gui handle
         self.config.get_gui(self)
@@ -148,6 +162,11 @@ class Pigeon_GUI:
         while self.ALIVE:
             message = self.textbox.edit()
 
+            if message == curses.KEY_RESIZE:
+                #self.system_pad.display_message("caught a resize", "fug")
+                self.resize_handler()
+                continue
+            
             if self.HANGUP:
                 self.HANGUP = False
                 self.in_conversation = False
@@ -268,6 +287,9 @@ class Scroll_Pad:
     def refresh(self):
         self.display.refresh(self.scroll, 0, self.y, self.x, self.nrow, self.ncol)
 
+    def resize(self, nrow, ncol):
+        self.display.resize(nrow, ncol)
+
     def display_message(self, message, name):
         self.display.addstr(name + ": " + message)
         self.display.addch('\n')
@@ -281,12 +303,19 @@ class Simple_Textbox:
         self.ncol = ncol
         self.win = curses.newwin(nrow, ncol, y, x)
 
+    def resize(self, nrow, ncol):
+        self.win.resize(nrow, ncol)
+        self.nrow = nrow
+        self.ncol = ncol
+
     # holy crap what a pile of steaming garbage TODO pls help
     def edit(self):
         str = []
         while True:
             ch = self.win.getch()
-            if ch == C.ENTER:    # ENTER
+            if ch == curses.KEY_RESIZE:
+                return curses.KEY_RESIZE
+            elif ch == C.ENTER:    # ENTER
                 self.win.clear()
                 self.win.move(0,0)
                 self.win.refresh()
