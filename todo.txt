@@ -26,7 +26,7 @@ connect fail bug:
 	other end connects, you hangup, you cannot reach other end anymore
 	can't figure this one out, maybe a join time issue?
 
-rsa chat length:
+rsa chat length:     DONE
     	long message becomes gibberish, calculate length and break up message
 
 resize window bug:  DONE
