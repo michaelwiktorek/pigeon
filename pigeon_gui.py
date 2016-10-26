@@ -175,9 +175,11 @@ class Pigeon_GUI:
                 elif self.conn_thread.isAlive():
                     self.conn_thread.join()
                 # start new wait_connection_background thread
+                self.system_pad.display_message("starting new wait conn thread", "debug")
                 self.wait_conn_thread = threading.Thread(target=self.wait_connection_background)
                 self.wait_conn_thread.start()
                 self.system_pad.display_message("Chat ended at " + time.ctime(time.time()), "SYSTEM")
+                continue
             
             if len(message) > 0 and message[0] == "/":
                 cmd = message.replace(" ", "").replace("\n", "")
@@ -210,7 +212,6 @@ class Pigeon_GUI:
                         other = self.textbox.edit()
                         # we want to spawn a thread here
                         # to do connect_background
-                        #self.THREAD_STAY_ALIVE = False         # kill threads just in case
                         self.communicator.server_wait = False  # stop comm.wait_connection
                         self.wait_conn_thread.join()           # join wait thread
                         self.conn_thread = threading.Thread(target=self.connect_background, args=(other,))

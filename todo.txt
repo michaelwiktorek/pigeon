@@ -28,5 +28,5 @@ connect fail bug:
 rsa chat length:
     	long message becomes gibberish, calculate length and break up message
 
-resize window bug:
+resize window bug:  DONE
        fatal program crash when window is resized
