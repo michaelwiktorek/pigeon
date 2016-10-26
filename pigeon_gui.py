@@ -43,6 +43,7 @@ class Pigeon_GUI:
             res3 = self.upnp.router_forward_port(C.CLIENT_REGISTER_PORT, C.CLIENT_REGISTER_PORT,self.local_ip, 'UDP')
             if int(res1.status) == 500:
                 self.system_pad.display_message("Failed to forward test port", "SYSTEM")
+                self.UPNP_PORTS_FORWARDED = False
             if int(res2.status) == 500:
                 self.system_pad.display_message("Failed to forward listen port", "SYSTEM")
             if int(res3.status) == 500:
@@ -215,7 +216,6 @@ class Pigeon_GUI:
                         self.communicator.server_wait = False  # stop comm.wait_connection
                         self.wait_conn_thread.join()           # join wait thread
                         self.conn_thread = threading.Thread(target=self.connect_background, args=(other,))
-                        #self.system_pad.display_message("Can't connect to " + other, "SYSTEM")
                         self.conn_thread.start()
                     else:
                         continue

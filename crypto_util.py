@@ -1,7 +1,14 @@
 import os
+from math import log
 
 # Helpful cryptographic utilities
 class Crypto_Util:
+
+    @staticmethod
+    def bytes_needed(number):
+        if number == 0:
+            return 1
+        return int(log(number, 256)) + 1
 
     @staticmethod
     def rand_prob_prime(length_bytes):

@@ -9,7 +9,7 @@ class Pigeon_Threads:
                 message = gui.msg_send.get(block=True, timeout=1)
                 # we could try send/recv public keys here
                 if message != C.KILL:
-                    msg_cipher = str(gui.rsa.encrypt_known(message))
+                    msg_cipher = gui.rsa.encipher_long_str(message)
                 else:
                     msg_cipher = message
                 sock.sendall(msg_cipher)
@@ -25,7 +25,7 @@ class Pigeon_Threads:
                     gui.chat_pad.display_message("Other side has disconnected, hit [ENTER] to leave", "SYSTEM")
                     gui.HANGUP = True
                 elif message:
-                    message_decrypt = gui.rsa.decrypt(int(message))
+                    message_decrypt = gui.rsa.decipher_long_str(message)
                     gui.chat_pad.display_message(message_decrypt, gui.other_name)
             except:
                 continue

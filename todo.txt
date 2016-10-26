@@ -22,8 +22,9 @@ chat with multiple users at once
 
 Bugs:
 
-connect fail bug:
+connect fail bug:  
 	other end connects, you hangup, you cannot reach other end anymore
+	can't figure this one out, maybe a join time issue?
 
 rsa chat length:
     	long message becomes gibberish, calculate length and break up message
