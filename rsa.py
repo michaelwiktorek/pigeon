@@ -50,9 +50,9 @@ class RSA:
         return str(self.encrypt_known(string))
 
     def encipher_long_str(self, string):
+        return self.encipher_str(string)
         str_int = self.str_to_int(string)
         num_chunks = float(self.bytes_needed(str_int))/self.bytes_needed(self.public_mod)
-        num_chunks = 0.5
         # if message is small enough, just encrypt it
         # otherwise break it up
         if num_chunks < 1:
