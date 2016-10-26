@@ -60,12 +60,8 @@ class Pigeon_GUI:
                 self.system_pad.display_message("Failed to close register port", "SYSTEM")
 
     def print_userlist(self, window):
-        self.userlist_win.border()
         for addr in self.register.userlist.keys():
-            self.userlist_win.addstr(self.register.userlist[addr][0] + " at " + addr)
-            curs_y, curs_x = self.userlist_win.getyx()
-            self.userlist_win.move(curs_y+1, 0)
-        self.userlist_win.refresh()
+            self.userlist_pad.write(self.register.userlist[addr][0] + " at " + addr)
 
     def start_convo(self, conn, other_name):
         self.in_conversation = True
@@ -96,12 +92,17 @@ class Pigeon_GUI:
 
     def resize_handler(self):
         scr_y, scr_x = self.screen.getmaxyx()
+        self.screen.clear()
+        self.screen.refresh()
         self.chat_pad.resize(2*scr_y/3, 2*scr_x/3)
         self.system_pad.resize(2*scr_y/3, 2*scr_x/3)
-        self.userlist_win.resize(2*scr_y/3, scr_x/3)
+        self.userlist_pad.resize(2*scr_y/3, scr_x/3-1)
+        self.userlist_pad.move(0, 2*scr_x/3)
+        self.textbox.move(scr_y-3, 0)
+        self.textbox.resize(3, scr_x)
         self.chat_pad.refresh()
         self.system_pad.refresh()
-        self.userlist_win.refresh()
+        self.userlist_pad.refresh()
         curses.resizeterm(scr_y, scr_x)
        
     def initialize_elements(self, screen):
@@ -119,12 +120,7 @@ class Pigeon_GUI:
         self.textbox = Simple_Textbox(3, scr_x, scr_y-3, 0)
 
         # display current list of users, maybe some commands
-        self.userlist_win = curses.newwin(2*scr_y/3, scr_x/3, 0, 2*scr_x/3)
-        self.userlist_win.leaveok(0)
-        self.userlist_win.border()
-        self.userlist_win.refresh()
-
-        #signal.signal(signal.SIGWINCH, self.resize_handler)
+        self.userlist_pad = Scroll_Pad(2*scr_y/3, scr_x/3, 0, 2*scr_x/3)
 
         # give the configurator a gui handle
         self.config.get_gui(self)
@@ -144,8 +140,7 @@ class Pigeon_GUI:
         self.register.register(self.name)
         if self.register.CONNECTED:
             self.register.request_userlist(self.name)
-            self.userlist_win.clear()
-            self.print_userlist(self.userlist_win)
+            self.print_userlist(self.userlist_pad)
 
         self.system_pad.display_message("Welcome, " + self.name, "SYSTEM")
         self.system_pad.display_message(C.START_MSG, "SYSTEM")
@@ -163,7 +158,6 @@ class Pigeon_GUI:
             message = self.textbox.edit()
 
             if message == curses.KEY_RESIZE:
-                #self.system_pad.display_message("caught a resize", "fug")
                 self.resize_handler()
                 continue
             
@@ -233,8 +227,8 @@ class Pigeon_GUI:
                 elif cmd == "/online":
                     if self.register.CONNECTED:
                         self.register.request_userlist(self.name)
-                        self.userlist_win.clear()
-                        self.print_userlist(self.userlist_win)
+                        #self.userlist_pad.clear()
+                        self.print_userlist(self.userlist_pad)
                         self.system_pad.display_message("Userlist updated!", "SYSTEM")
                     else:
                         self.system_pad.display_message("Not registered with server!", "REGISTER")
@@ -248,8 +242,7 @@ class Pigeon_GUI:
                     self.register.register(self.name)
                     if self.register.CONNECTED:
                         self.register.request_userlist(self.name)
-                        self.userlist_win.clear()
-                        self.print_userlist(self.userlist_win)
+                        self.print_userlist(self.userlist_pad)
                 elif cmd == "/unregister":
                     if self.register.CONNECTED:
                         self.register.unregister(self.config.name)
@@ -285,10 +278,20 @@ class Scroll_Pad:
         self.refresh()
         
     def refresh(self):
-        self.display.refresh(self.scroll, 0, self.y, self.x, self.nrow, self.ncol)
+        self.display.refresh(0, 0, self.y, self.x, self.nrow + self.y, self.ncol + self.x)
 
     def resize(self, nrow, ncol):
-        self.display.resize(nrow, ncol)
+        self.nrow = nrow
+        self.ncol = ncol
+
+    def move(self, y, x):
+        self.y = y
+        self.x = x
+
+    def write(self, message):
+        self.display.addstr(message)
+        self.display.addch('\n')
+        self.refresh()
 
     def display_message(self, message, name):
         self.display.addstr(name + ": " + message)
@@ -302,7 +305,13 @@ class Simple_Textbox:
         self.nrow = nrow
         self.ncol = ncol
         self.win = curses.newwin(nrow, ncol, y, x)
+        self.str = []
 
+    def move(self, y, x):
+        self.win.mvwin(y, x)
+        self.y = y
+        self.x = x
+        
     def resize(self, nrow, ncol):
         self.win.resize(nrow, ncol)
         self.nrow = nrow
@@ -310,7 +319,6 @@ class Simple_Textbox:
 
     # holy crap what a pile of steaming garbage TODO pls help
     def edit(self):
-        str = []
         while True:
             ch = self.win.getch()
             if ch == curses.KEY_RESIZE:
@@ -319,16 +327,18 @@ class Simple_Textbox:
                 self.win.clear()
                 self.win.move(0,0)
                 self.win.refresh()
-                return "".join(str)
+                output = "".join(self.str)
+                self.str = []
+                return output
             elif ch == C.DEL or ch == C.DEL_2:  # DELETE
                 curs_y, curs_x = self.win.getyx()
                 win_y, win_x = self.win.getmaxyx()
                 # garbage move cursor
                 if curs_x > 0:
-                    str.pop()
+                    self.str.pop()
                     self.win.move(curs_y, curs_x-1)
                 elif curs_y >= 1:
-                    str.pop()
+                    self.str.pop()
                     self.win.move(curs_y-1, win_x-1)
                     
                 self.win.delch()
@@ -338,10 +348,10 @@ class Simple_Textbox:
                 if curs_x == win_x-1:
                     if curs_y < win_y-1:
                         self.win.addch(chr(ch))
-                        str.append(chr(ch))
+                        self.str.append(chr(ch))
                         self.win.move(curs_y + 1, 0)
                 else:
                     self.win.addch(chr(ch))
-                    str.append(chr(ch))
+                    self.str.append(chr(ch))
                     self.win.move(curs_y, curs_x + 1)
                 self.win.refresh()
