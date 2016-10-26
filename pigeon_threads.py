@@ -25,7 +25,8 @@ class Pigeon_Threads:
                     gui.chat_pad.display_message("Other side has disconnected, hit [ENTER] to leave", "SYSTEM")
                     gui.HANGUP = True
                 elif message:
-                    message_decrypt = gui.rsa.decipher_long_str(message)
+                    #message_decrypt = gui.rsa.decipher_long_str(message)
+                    message_decrypt = str(message)
                     gui.chat_pad.display_message(message_decrypt, gui.other_name)
             except:
                 continue
