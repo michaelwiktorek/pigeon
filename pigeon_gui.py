@@ -176,7 +176,6 @@ class Pigeon_GUI:
                 elif self.conn_thread.isAlive():
                     self.conn_thread.join()
                 # start new wait_connection_background thread
-                self.system_pad.display_message("starting new wait conn thread", "debug")
                 self.wait_conn_thread = threading.Thread(target=self.wait_connection_background)
                 self.wait_conn_thread.start()
                 self.system_pad.display_message("Chat ended at " + time.ctime(time.time()), "SYSTEM")
@@ -265,7 +264,6 @@ class Pigeon_GUI:
                     self.chat_pad.display_message(message, "You")
                     self.msg_send.put(message)
                 else:
-                    #self.system_pad.display_message(message, "You")                    
                     continue
 
 class Scroll_Pad:
@@ -328,7 +326,7 @@ class Simple_Textbox:
         self.nrow = nrow
         self.ncol = ncol
 
-    # holy crap what a pile of steaming garbage TODO pls help
+    # let's just say that this could really use some work
     def edit(self):
         while True:
             ch = self.win.getch()
