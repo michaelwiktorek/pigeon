@@ -3,6 +3,7 @@ import signal
 import socket
 import curses
 import time
+import os
 import math
 import curses.textpad
 from Queue import Queue
@@ -108,6 +109,9 @@ class Pigeon_GUI:
     def initialize_elements(self, screen):
         self.ALIVE = True
         self.screen = screen
+        
+        curses.use_default_colors()
+        
         scr_y, scr_x = self.screen.getmaxyx()
         
         # we display chat history in the display_pad
@@ -267,6 +271,7 @@ class Scroll_Pad:
     def __init__(self, nrow, ncol, y, x):
         self.display = curses.newpad(nrow, ncol)
         self.scroll = 0
+        self.init_ncol = ncol
         self.y = y
         self.x = x
         self.nrow = nrow
@@ -278,9 +283,14 @@ class Scroll_Pad:
         self.refresh()
         
     def refresh(self):
-        self.display.refresh(0, 0, self.y, self.x, self.nrow + self.y, self.ncol + self.x)
+        self.display.refresh(self.scroll, 0, self.y, self.x, self.nrow + self.y, self.ncol + self.x)
 
     def resize(self, nrow, ncol):
+        curs_y, curs_x = self.display.getyx()
+        if curs_y < nrow - 1:
+            self.display.resize(nrow, self.init_ncol)
+        else:
+            self.scroll = (curs_y - nrow)
         self.nrow = nrow
         self.ncol = ncol
 
