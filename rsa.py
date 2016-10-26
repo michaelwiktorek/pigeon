@@ -53,7 +53,7 @@ class RSA:
     def encipher_long_str(self, string):
         str_int = self.str_to_int(string)
         #num_chunks = float(self.bytes_needed(str_int))/(2 * self.PRIME_MIN_BYTES)
-        num_chunks = float(sys.getsizeof(str_int))/(2 * self.PRIME_MIN_BYTES)
+        num_chunks = float(sys.getsizeof(str_int))/sys.getsizeof(self.public_mod)
         # if message is small enough, just encrypt it
         # otherwise break it up
         if num_chunks < 1:
@@ -74,7 +74,7 @@ class RSA:
 
     def divide_str(self, string, chunks):
         chunk_size = len(string)/chunks
-        return [string[i:i+chunk_size] for i in range(0, chunks)]
+        return [string[i:i+chunk_size] for i in range(0, len(string), chunk_size)]
             
 
     def sign(self, message):
@@ -93,9 +93,9 @@ if __name__ == "__main__":
     foo_pubkey = foo.get_public_key()
 
     message = "the russians are coming"
-    print "message: " + message
+    #print "message: " + message
     foo_cipher = foo.encrypt(message, foo_pubkey)
-    print "encrypted decimal: " + str(foo_cipher)
+    #print "encrypted decimal: " + str(foo_cipher)
     foo_out = foo.decrypt(foo_cipher)
-    print "decrypted message: " + foo_out
+    #print "decrypted message: " + foo_out
     
