@@ -1,5 +1,5 @@
 import sys
-from pigeon import Communicator
+from pigeon_communicator import Communicator
 from pigeon_gui import Pigeon_GUI
 from pigeon_threads import Pigeon_Threads
 from pigeon_config import Pigeon_Config

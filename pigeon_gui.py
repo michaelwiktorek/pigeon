@@ -264,6 +264,7 @@ class Pigeon_GUI:
                     self.chat_pad.display_message(message, "You")
                     self.msg_send.put(message)
                 else:
+                    #self.system_pad.display_message(message, "You")                    
                     continue
 
 class Scroll_Pad:
@@ -326,7 +327,7 @@ class Simple_Textbox:
         self.nrow = nrow
         self.ncol = ncol
 
-    # let's just say that this could really use some work
+    # let's just say that this needs some work
     def edit(self):
         while True:
             ch = self.win.getch()
