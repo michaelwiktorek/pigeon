@@ -23,7 +23,7 @@ class RSA:
         return int(string.encode('hex'), 16)
 
     def int_to_str(self, num):
-        return hex(out_num)[2:][:-1].decode('hex')
+        return hex(num)[2:][:-1].decode('hex')
 
     def encrypt(self, message, pub_key):
         mesg_num = self.str_to_int(message)
