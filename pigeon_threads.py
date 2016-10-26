@@ -20,7 +20,7 @@ class Pigeon_Threads:
     def receive_worker(sock, gui):
         while gui.communicator.THREAD_STAY_ALIVE:
             try:
-                message = sock.recv(1024)
+                message = sock.recv(2048)
                 if message == C.KILL:
                     gui.chat_pad.display_message("Other side has disconnected, hit [ENTER] to leave", "SYSTEM")
                     gui.HANGUP = True
