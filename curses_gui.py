@@ -25,7 +25,7 @@ class Curses_Gui:
         # four different windows for displaying text
         self.chat_pad     = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
         self.system_pad   = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
-        self.textbox      = Simple_Textbox(3, scr_x, scr_y-3, 0)
+        self.textbox      = Simple_Textbox(3, scr_x, scr_y-3, 0, self)
         self.userlist_pad = Scroll_Pad(2*scr_y/3, scr_x/3, 0, 2*scr_x/3)
 
     def sys_write(self, message):
@@ -103,7 +103,8 @@ class Scroll_Pad:
 
 # collects text, including resize character
 class Simple_Textbox:
-    def __init__(self, nrow, ncol, y, x):
+    def __init__(self, nrow, ncol, y, x, gui):
+        self.gui = gui # ugly hack
         self.y = y
         self.x = x
         self.nrow = nrow
@@ -126,7 +127,7 @@ class Simple_Textbox:
         while True:
             ch = self.win.getch()
             if ch == curses.KEY_RESIZE:         # RESIZE
-                self.resize_handler()
+                self.gui.resize_handler()
                 continue
             elif ch == C.ENTER:                 # ENTER
                 self.win.clear()
