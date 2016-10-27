@@ -1,10 +1,11 @@
-from pigeon_constants import Pigeon_Constants as C
-from Queue import Queue
-import socket
-from upnp import upnp
-from pigeon_threads import Pigeon_Threads
 import threading
 import time
+import socket
+from pigeon_constants import Pigeon_Constants as C
+from Queue            import Queue
+from upnp             import upnp
+from pigeon_threads   import Pigeon_Threads
+
 
 class Pigeon_Controller:
     def __init__(self, config, register, communicator, gui):
@@ -68,6 +69,8 @@ class Pigeon_Controller:
         self.gui.sys_write("Calling registration server...")
         if not self.register.register(name):
             self.gui.sys_write("Failed to register with " + self.register.server_ip)
+        else:
+            self.gui.sys_write("Registered with " + self.register.server_ip + " as " + name)
         # print online users 
         self.do_online()
         self.gui.sys_write("Welcome, " + name)

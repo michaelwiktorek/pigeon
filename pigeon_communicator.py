@@ -1,11 +1,10 @@
 import socket
 import sys
 import signal
-from pigeon_gui import Pigeon_GUI
-from pigeon_config import Pigeon_Config
-from pigeon_constants import Pigeon_Constants as C
+from pigeon_config         import Pigeon_Config
+from pigeon_constants      import Pigeon_Constants as C
 from pigeon_register_agent import Pigeon_Register_Agent
-from rsa import RSA
+from rsa                   import RSA
 
 class Communicator:
     def __init__(self, config, register_agent):

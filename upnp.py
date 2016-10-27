@@ -1,11 +1,11 @@
 # mostly adapted from a nice tutorial located at
 # http://mattscodecave.com/posts/using-python-and-upnp-to-forward-a-port.html
 
-from socket import *
 import re
 import urllib2
 import httplib
-from urlparse import urlparse
+from socket          import *
+from urlparse        import urlparse
 from xml.dom.minidom import parseString
 from xml.dom.minidom import Document
 
