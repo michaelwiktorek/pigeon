@@ -11,28 +11,22 @@ class Pigeon_Config:
         
     # attempt to read name from config file
     # if no file exists, create it
-    def obtain_name(self):
-        name = C.DEFAULT_NAME
+    def read_name(self):
         try:
             config_file = open("pigeon.conf", 'r')
-            name = config_file.readline().replace("\n", "")
+            self.name = config_file.readline().replace("\n", "")
             config_file.close()
+            return self.name
         except:
-            self.display.display_message("No name found!", "CONFIG")
-            name = self.change_name_config()
-        self.name = name
-        return name
+            return None
 
     # change our name in the configuration file
-    def change_name_config(self):
+    def change_name_config(self, name):
         try:
             config_file = open("pigeon.conf", 'w')
-            self.display.display_message("Type your new name and hit [ENTER]", "CONFIG")
-            name = self.textbox.edit()
             config_file.write(name + "\n")
             config_file.close()
-            self.display.display_message("Your name is now " + name, "CONFIG")
             self.name = name
-            return name
+            return True
         except:
-            self.display.display_message("Error changing name!", "CONFIG")
+            return False

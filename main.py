@@ -1,10 +1,12 @@
 import sys
 from pigeon_communicator import Communicator
+from pigeon_controller import Pigeon_Controller
 from pigeon_gui import Pigeon_GUI
 from pigeon_threads import Pigeon_Threads
 from pigeon_config import Pigeon_Config
 from pigeon_constants import Pigeon_Constants as C
 from pigeon_register_agent import Pigeon_Register_Agent
+from curses_gui import Curses_Gui
 from rsa import RSA
 
 if __name__ == "__main__":
@@ -18,9 +20,11 @@ if __name__ == "__main__":
 
     communicator = Communicator(config, register_agent)
 
-    gui = Pigeon_GUI(config, register_agent, communicator)
+    gui = Curses_Gui()
     
-    gui.start_gui()
+    controller = Pigeon_Controller(config, register_agent, communicator, gui)
+
+    controller.start()
 
     # GUI runs always
     #

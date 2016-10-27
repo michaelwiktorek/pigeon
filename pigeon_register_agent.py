@@ -83,16 +83,13 @@ class Pigeon_Register_Agent:
 
 
     def register(self, name):
-        self.display.display_message("Calling registration server...", "REGISTER")
         if self.send_wait_ack(name + ":" + C.REGISTER):
             self.ALIVE = True
             self.CONNECTED = True
             self.keep_alive_thread = threading.Thread(target=self.keep_alive)
             self.keep_alive_thread.start()
-            self.display.display_message("Registered with " + self.server_ip + " as " + name, "REGISTER")
             return True
         else:
-            self.display.display_message("Failed to register with server at " + self.server_ip, "REGISTER")
             return False
 
     def unregister(self, name):

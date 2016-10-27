@@ -153,6 +153,18 @@ class upnp:
     def print_response(self, resp):
         print resp.status
         print resp.read()
+
+    def udp_tunnel(self, port, ip):
+        return self.router_forward_port(port, port, ip, 'UDP')
+
+    def tcp_tunnel(self, port, ip):
+        return self.router_forward_port(port, port, ip, 'TCP')
+
+    def udp_end_tunnel(self, port, ip):
+        return self.router_delete_port(port, port, ip, 'UDP')
+
+    def tcp_end_tunnel(self, port, ip):
+        return self.router_delete_port(port, port, ip, 'TCP')
         
 
 if __name__ == "__main__":

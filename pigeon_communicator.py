@@ -5,6 +5,7 @@ from pigeon_gui import Pigeon_GUI
 from pigeon_config import Pigeon_Config
 from pigeon_constants import Pigeon_Constants as C
 from pigeon_register_agent import Pigeon_Register_Agent
+from rsa import RSA
 
 class Communicator:
     def __init__(self, config, register_agent):
@@ -17,6 +18,7 @@ class Communicator:
         self.SERVER_TIMEOUT = 1
         self.THREAD_STAY_ALIVE = False
         self.QUIT = False
+        self.rsa = RSA()
 
     # listen for other user's name on socket
     def recv_other_data(self, sock):
@@ -30,8 +32,7 @@ class Communicator:
         return (other_name, pubkey)
 
     # get an rsa object god this needs refactoring, also gen keypair
-    def get_rsa(self, rsa):
-        self.rsa = rsa
+    def rsa_gen_keypair(self):
         self.rsa.gen_keypair()
         self.n, self.e = self.rsa.get_public_key()
 

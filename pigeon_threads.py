@@ -3,13 +3,14 @@ from pigeon_constants import Pigeon_Constants as C
 class Pigeon_Threads:
 
     @staticmethod
-    def send_worker(sock, gui):
-        while gui.communicator.THREAD_STAY_ALIVE:
+    def send_worker(sock, controller):
+        rsa = controller.communicator.rsa
+        while controller.communicator.THREAD_STAY_ALIVE:
             try:
-                message = gui.msg_send.get(block=True, timeout=1)
+                message = controller.msg_send.get(block=True, timeout=1)
                 # we could try send/recv public keys here
                 if message != C.KILL:
-                    msg_cipher = gui.rsa.encipher_long_str(message)
+                    msg_cipher = rsa.encipher_long_str(message)
                 else:
                     msg_cipher = message
                 sock.sendall(msg_cipher)
@@ -17,15 +18,17 @@ class Pigeon_Threads:
                 continue # we can do something here maybe
 
     @staticmethod
-    def receive_worker(sock, gui):
-        while gui.communicator.THREAD_STAY_ALIVE:
+    def receive_worker(sock, controller, other_name):
+        gui = controller.gui
+        rsa = controller.communicator.rsa
+        while controller.communicator.THREAD_STAY_ALIVE:
             try:
                 message = sock.recv(2048)
                 if message == C.KILL:
-                    gui.chat_pad.display_message("Other side has disconnected, hit [ENTER] to leave", "SYSTEM")
-                    gui.HANGUP = True
+                    gui.chat_notify("Other side has disconnected, hit [ENTER] to leave")
+                    controller.HANGUP = True
                 elif message:
-                    message_decrypt = gui.rsa.decipher_long_str(message)
-                    gui.chat_pad.display_message(message_decrypt, gui.other_name)
+                    message_decrypt = rsa.decipher_long_str(message)
+                    gui.chat_write(message_decrypt, other_name)
             except:
                 continue

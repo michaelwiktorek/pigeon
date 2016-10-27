@@ -1,0 +1,24 @@
+This is a short specification document that defines an interface for a Pigeon GUI.
+
+A GUI for Pigeon must provide the following functions:
+
+sys_write(message):
+	write a message to a system-output display in the format "SYSTEM: [message]"
+
+chat_write(message, name):
+	write a message to a chat-history display in the format "[name]: [message]"
+
+chat_notify(message):
+	write a message to a chat-history display in the format "SYSTEM: [message]"
+
+print_userlist(userlist):
+	print a dict {addr:username} in a userlist display in the form "username: addr"
+
+get_text():
+	return a string typed into the chat box by the user
+
+start_gui():
+	startup function. This can be a dummy function, but other functions must work after it is called
+
+end_gui():
+	ending function. This can be a dummy function, but the gui must die after it is called
