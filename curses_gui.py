@@ -32,10 +32,10 @@ class Curses_Gui:
         self.system_pad.write_from_name(message, "SYSTEM")
 
     def chat_write(self, message, name):
-        self.system_pad.write_from_name(message, name)
+        self.chat_pad.write_from_name(message, name)
 
     def chat_notify(self, message):
-        self.system_pad.write_from_name(message, "SYSTEM")
+        self.chat_pad.write_from_name(message, "SYSTEM")
 
     def print_userlist(self, userlist):
         for addr in userlist.keys():
