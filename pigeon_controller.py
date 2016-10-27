@@ -192,7 +192,7 @@ class Pigeon_Controller:
         self.communicator.THREAD_STAY_ALIVE = True
         sender = threading.Thread(target=Pigeon_Threads.send_worker, args=(conn, self))
         sender.start()
-        self.chat_notify("Chat with " + other_name)
+        self.gui.chat_notify("Chat with " + other_name)
         Pigeon_Threads.receive_worker(conn, self, other_name)
         sender.join()
     
@@ -226,7 +226,7 @@ class Pigeon_Controller:
             res3 = self.upnp.udp_tunnel(C.CLIENT_REGISTER_PORT, self.local_ip)
             
             if int(res1.status) == 500:
-                self.gui.sys_write("Failed to forward test port")
+                self.gui.sys_write("Failed to forward ports")
                 self.UPNP_PORTS_FORWARDED = False
 
     def upnp_close_ports(self):
