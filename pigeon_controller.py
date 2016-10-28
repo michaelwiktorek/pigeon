@@ -129,8 +129,9 @@ class Pigeon_Controller:
             self.gui.print_userlist(self.register.userlist)
 
     def do_register(self, ip):
-        #self.gui.sys_write("Type an IP address and hit [ENTER]")
-        #ip = self.gui.get_text()
+        if not ip:
+            self.gui.sys_write("This command needs an IP address!")
+            return
         # don't do anything if we are registered
         if not self.register.CONNECTED:
             self.register.set_server_ip(ip)
@@ -151,6 +152,9 @@ class Pigeon_Controller:
             self.gui.sys_write("Not registered with a server!")
 
     def do_rename(self, new_name):
+        if not new_name:
+            self.gui.sys_write("This command needs a new name!")
+            return
         old_name = self.config.name
         if not self.config.change_name_config(new_name):
             self.gui.sys_write("Error changing name!")
@@ -176,6 +180,9 @@ class Pigeon_Controller:
         self.gui.end_gui()
 
     def do_connect(self, other):
+        if not other:
+            self.gui.sys_write("This command needs an IP address or name!")
+            return
         # communicator needs to say this
         if not self.IN_CONVERSATION:
             # we want to spawn a thread here

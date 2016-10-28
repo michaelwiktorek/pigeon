@@ -83,8 +83,8 @@ class Tkinter_Gui:
         self.parent.destroy()
 
     def print_userlist(self, userlist):
-        self.userlist_box.delete(0, tk.END)
         self.userlist_box.configure(state="normal")
+        self.userlist_box.delete(1.0, tk.END)
         for addr in userlist.keys():
             self.userlist_box.insert("end", userlist[addr][0] + " at " + addr + "\n")
         self.userlist_box.configure(state="disabled")
