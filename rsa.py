@@ -24,6 +24,8 @@ class RSA:
         return int(string.encode('hex'), 16)
 
     def int_to_str(self, num):
+        # this because python adds '0x' and 'L' to the ends of the string
+        # is there a better way to deal with this? Probably
         return hex(num)[2:][:-1].decode('hex')
 
     def encrypt(self, message, pub_key):
@@ -40,7 +42,6 @@ class RSA:
 
     def decrypt(self, message):
         out_num = pow(message, self.private_exp, self.public_mod)
-        # this because python adds '0x' and 'L' to the ends of the string
         out = self.int_to_str(out_num)
         return out
 
@@ -78,13 +79,10 @@ class RSA:
             
 
     def sign(self, message):
-        print "TODO"
+        return "TODO"
 
     def get_public_key(self):
         return (self.public_mod, self.public_exp)
-
-    def get_private_key(self):
-        print "TODO maybe don't need this"
 
 
 if __name__ == "__main__":
