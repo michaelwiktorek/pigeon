@@ -1,3 +1,8 @@
+"""
+Pigeon is a peer-to-peer chat client with end-to-end encryption.
+Copyright (C) 2016 Michael Wiktorek
+"""
+
 from pigeon_constants import Pigeon_Constants as C
 
 class Pigeon_Threads:

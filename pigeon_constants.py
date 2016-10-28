@@ -1,3 +1,8 @@
+"""
+Pigeon is a peer-to-peer chat client with end-to-end encryption.
+Copyright (C) 2016 Michael Wiktorek
+"""
+
 class Pigeon_Constants:
     # ports
     SERVER_MAIN_PORT     = 5554

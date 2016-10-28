@@ -1,3 +1,8 @@
+"""
+Pigeon is a peer-to-peer chat client with end-to-end encryption.
+Copyright (C) 2016 Michael Wiktorek
+"""
+
 from crypto_util import Crypto_Util
 
 class Diffie:

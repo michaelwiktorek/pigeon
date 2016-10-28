@@ -1,3 +1,8 @@
+"""
+Pigeon is a peer-to-peer chat client with end-to-end encryption.
+Copyright (C) 2016 Michael Wiktorek
+"""
+
 # mostly adapted from a nice tutorial located at
 # http://mattscodecave.com/posts/using-python-and-upnp-to-forward-a-port.html
 
