@@ -37,11 +37,12 @@ def print_usage_exit():
 
 if __name__ == "__main__":
 
-    try:
-        gui_choice = sys.argv[1].lower()
-        gui = gui_list[gui_choice]()
-    except:
-        print_usage_exit()
+    #try:
+    #    gui_choice = sys.argv[1].lower()
+    #    gui = gui_list[gui_choice]()
+    #except:
+    #    print_usage_exit()
+    gui = Tkinter_Gui()
     
     config = Pigeon_Config()
     register_agent = Pigeon_Register_Agent(sys.argv)
