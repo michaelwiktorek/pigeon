@@ -1,6 +1,7 @@
 import Tkinter as tk
 import tkMessageBox as messagebox
 from Queue import Queue
+import sys
 
 class Tkinter_Gui:
 
@@ -11,6 +12,7 @@ class Tkinter_Gui:
             self.parent = tk.Tk()
         except:
             print "Tkinter GUI will not work without a display!"
+            sys.exit(0)
         self.parent.wm_title("pigeon")
 
         self.user_text = Queue()
