@@ -6,8 +6,11 @@ class Tkinter_Gui:
 
     def __init__(self):
         self.HANDLES_MAIN_LOOP = True
-        
-        self.parent = tk.Tk()
+
+        try:
+            self.parent = tk.Tk()
+        except e:
+            print e
         self.parent.wm_title("pigeon")
 
         self.user_text = Queue()
