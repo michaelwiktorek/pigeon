@@ -9,8 +9,8 @@ class Tkinter_Gui:
 
         try:
             self.parent = tk.Tk()
-        except e:
-            print e
+        except:
+            print "Tkinter GUI will not work without a display!"
         self.parent.wm_title("pigeon")
 
         self.user_text = Queue()
