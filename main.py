@@ -9,15 +9,21 @@ from tkinter_gui           import Tkinter_Gui
 from rsa                   import RSA
 
 if __name__ == "__main__":
+
+    if len(sys.argv) == 2:
+        if sys.argv[1] == "curses":
+            gui = Curses_Gui()
+        elif sys.argv[1] == "tkinter":
+            gui = Tkinter_Gui()
+    else:
+        print "usage: python main.py < curses | tkinter >"
+        sys.exit(0)
     
     config = Pigeon_Config()
 
     register_agent = Pigeon_Register_Agent(sys.argv)
 
     communicator = Communicator(config, register_agent)
-
-    #gui = Curses_Gui()
-    gui = Tkinter_Gui()
     
     controller = Pigeon_Controller(config, register_agent, communicator, gui)
 

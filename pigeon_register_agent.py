@@ -10,10 +10,10 @@ class Pigeon_Register_Agent:
         self.userlist = {}
         self.CONNECTED = False
         self.HOST = ""
-        if len(argv) == 2:
-            self.server_ip = argv[1]
-        else:
-            self.server_ip = C.DEFAULT_SERVER
+        #if len(argv) == 2:
+        #    self.server_ip = argv[1]
+        #else:
+        self.server_ip = C.DEFAULT_SERVER
         self.MAX_ATTEMPTS = 1
         self.ALIVE = True
 
