@@ -1,4 +1,5 @@
 import Tkinter as tk
+import tkMessageBox as messagebox
 from Queue import Queue
 
 class Tkinter_Gui:
@@ -33,15 +34,11 @@ class Tkinter_Gui:
         self.textbox.bind("<Return>", self.handle_text)
         self.textbox.focus_force()
 
-    def button2_click(self):
-        print "tkinter gui has quit, lol"
-        self.parent.destroy()
+        self.parent.protocol("WM_DELETE_WINDOW", self.on_closing)
 
-    # DELET THIS
-    def write_junk(self, event):
-        text = self.textbox.get()
-        self.sys_write(text)
-        self.textbox.delete(0, tk.END)
+    def on_closing(self):
+        if messagebox.askokcancel("Quit", "Do you want to quit?"):
+            self.controller.handle_text("/quit")
 
     # Begin pigeon gui interface implementation ~~~
         
