@@ -3,10 +3,12 @@ from pigeon_constants import Pigeon_Constants as C
 
 # This class keeps the GUI code isolated from the controller code
 class Curses_Gui:
+    
     def __init__(self):
+        self.HANDLES_MAIN_LOOP = False
         return
 
-    def start_gui(self):
+    def start_gui(self, controller):
         self.screen = curses.initscr()
         curses.noecho()
         curses.cbreak()
@@ -38,6 +40,7 @@ class Curses_Gui:
         self.chat_pad.write_from_name(message, "SYSTEM")
 
     def print_userlist(self, userlist):
+        self.userlist_pad.clear()
         for addr in userlist.keys():
             self.userlist_pad.write(userlist[addr][0] + " at " + addr)
 
@@ -88,6 +91,9 @@ class Scroll_Pad:
             self.scroll = (curs_y - nrow)
         self.nrow = nrow
         self.ncol = ncol
+
+    def clear(self):
+        self.display.clear()
 
     def move(self, y, x):
         self.y = y

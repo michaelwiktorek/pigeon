@@ -37,9 +37,15 @@ class Pigeon_Controller:
     # route a command to its associated function
     def handle_text(self, text):
         if len(text) > 1 and text[0] == "/":
-            cmd = text.replace(" ", "").replace("\n", "")
+            cmd_ary = text.replace("\n", "").split()
+            if len(cmd_ary) > 1:
+                cmd = cmd_ary[0]
+                arg = cmd_ary[1]
+            else:
+                cmd = cmd_ary[0].replace(" ", "")
+                arg = None
             try:
-                self.command_map[cmd]()
+                self.command_map[cmd](arg)
             except KeyError:
                 self.gui.sys_write("Invalid Command")
         elif self.IN_CONVERSATION:
@@ -58,9 +64,13 @@ class Pigeon_Controller:
         else:
             return name
 
-    # call this to start the controller
     def start(self):
-        self.gui.start_gui() # TODO dunno if this should be here
+        self.gui.start_gui(self)
+        if not self.gui.HANDLES_MAIN_LOOP:
+            self.start_writing()
+        
+    # call this to start the controller
+    def start_writing(self):
         name = self.name_sequence()
         self.gui.sys_write("Forwarding router ports...")
         self.upnp_open_ports()
@@ -72,7 +82,7 @@ class Pigeon_Controller:
         else:
             self.gui.sys_write("Registered with " + self.register.server_ip + " as " + name)
         # print online users 
-        self.do_online()
+        self.do_online(None)
         self.gui.sys_write("Welcome, " + name)
         self.gui.sys_write(C.START_MSG)
 
@@ -81,7 +91,8 @@ class Pigeon_Controller:
         self.wait_conn_thread = threading.Thread(target=self.wait_connection_background)
         self.wait_conn_thread.start()
 
-        self.main_loop()
+        if not self.gui.HANDLES_MAIN_LOOP:
+            self.main_loop()
 
     # main input loop for controller
     def main_loop(self):
@@ -108,39 +119,40 @@ class Pigeon_Controller:
         self.wait_conn_thread.start()
         self.gui.sys_write("Chat ended at " + time.ctime(time.time()))
 
-    def do_commands(self):
+    def do_commands(self, arg):
         self.gui.sys_write(C.COMMANDS)
 
-    def do_online(self):
+    def do_online(self, arg):
         if self.register.CONNECTED:
             self.register.request_userlist(self.config.name)
             self.gui.print_userlist(self.register.userlist)
 
-    def do_register(self):
-        self.gui.sys_write("Type an IP address and hit [ENTER]")
-        ip = self.gui.get_text()
+    def do_register(self, ip):
+        #self.gui.sys_write("Type an IP address and hit [ENTER]")
+        #ip = self.gui.get_text()
         # don't do anything if we are registered
         if not self.register.CONNECTED:
             self.register.set_server_ip(ip)
             self.gui.sys_write("Calling registration server...")
             if self.register.register(self.config.name):
                 self.gui.sys_write("Registered with " + ip + " as " + self.config.name)
+                self.do_online(None)
             else:
                 self.gui.sys_write("Failed to register with server at " + ip)
         else:
             self.gui.sys_write("Already registered with a server!")
 
-    def do_unregister(self):
+    def do_unregister(self, arg):
         if self.register.CONNECTED:
             self.register.unregister(self.config.name)
             self.gui.sys_write("Logged out of " + self.register.server_ip)
         else:
             self.gui.sys_write("Not registered with a server!")
 
-    def do_rename(self):
+    def do_rename(self, new_name):
         old_name = self.config.name
-        self.gui.sys_write("Type your new name and hit [ENTER]")
-        new_name = self.gui.get_text()
+        #self.gui.sys_write("Type your new name and hit [ENTER]")
+        #new_name = self.gui.get_text()
         if not self.config.change_name_config(new_name):
             self.gui.sys_write("Error changing name!")
             return
@@ -148,7 +160,7 @@ class Pigeon_Controller:
             self.register.re_register(old_name, new_name)
         self.gui.sys_write("Your new name is " + self.config.name)
 
-    def do_quit(self):
+    def do_quit(self, arg):
         self.gui.sys_write("Quitting...")
         self.msg_send.put(C.KILL)
         if self.register.CONNECTED:
@@ -164,11 +176,11 @@ class Pigeon_Controller:
         self.ALIVE = False
         self.gui.end_gui()
 
-    def do_connect(self):
+    def do_connect(self, other):
         # communicator needs to say this
         if not self.IN_CONVERSATION:
-            self.gui.sys_write("Enter an IP or name")
-            other = self.gui.get_text()
+            #self.gui.sys_write("Enter an IP or name")
+            #other = self.gui.get_text()
             # we want to spawn a thread here
             # to do connect_background
             self.communicator.server_wait = False  # stop comm.wait_connection
@@ -176,7 +188,7 @@ class Pigeon_Controller:
             self.conn_thread = threading.Thread(target=self.connect_background, args=(other,))
             self.conn_thread.start()
 
-    def do_hangup(self):
+    def do_hangup(self, arg):
         if self.IN_CONVERSATION:
             self.msg_send.put(C.KILL)
             # TODO this might kill send threat too early?

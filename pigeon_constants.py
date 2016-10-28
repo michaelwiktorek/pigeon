@@ -33,11 +33,11 @@ class Pigeon_Constants:
     START_MSG = "Type /commands and hit [ENTER] for a list of commands!"
     COMMANDS = """Commands begin with a '/'.
 Type a command and then hit [ENTER]
-/quit       ... quit pigeon
-/connect    ... connect to another user
-/hangup     ... end a conversation with another user
-/online     ... request a list of online users
-/register   ... register with a pigeon server
-/unregister ... unregister with a pigeon server
-/rename     ... change your name
-/commands   ... see a list of commands"""
+/quit            ... quit pigeon
+/connect  [IP]   ... connect to another user
+/hangup          ... end a conversation
+/online          ... get a list of online users
+/register [IP]   ... register with a server
+/unregister      ... unregister with a server
+/rename   [name] ... change your name
+/commands        ... see a list of commands"""

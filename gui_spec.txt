@@ -16,9 +16,17 @@ print_userlist(userlist):
 
 get_text():
 	return a string typed into the chat box by the user
+	Note: might need to be changed if HANDLES_MAIN_LOOP
 
-start_gui():
+start_gui(controller):
 	startup function. This can be a dummy function, but other functions must work after it is called
 
 end_gui():
 	ending function. This can be a dummy function, but the gui must die after it is called
+
+bool: HANDLES_MAIN_LOOP
+      True: the gui handles the main loop
+      False: the controller handles the main loop
+      
+main_loop():
+	handles the input loop, if HANDLES_MAIN_LOOP is True
