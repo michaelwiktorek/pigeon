@@ -22,7 +22,7 @@ class Pigeon_Constants:
     DEFAULT_SERVER = "www.michaelwiktorek.com"
 
     # names
-    DEFAULT_NAME = "????"
+    DEFAULT_NAME = "User"
 
     # keys
     ENTER = 10

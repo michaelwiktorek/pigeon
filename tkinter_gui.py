@@ -7,6 +7,7 @@ class Tkinter_Gui:
         self.HANDLES_MAIN_LOOP = True
         
         self.parent = tk.Tk()
+        self.parent.wm_title("pigeon")
 
         self.user_text = Queue()
         self.controller = None
@@ -14,19 +15,19 @@ class Tkinter_Gui:
         self.container1 = tk.Frame(self.parent)
         self.container1.pack()
 
-        #self.button2 = tk.Button(self.container1, text="Quit", command=self.button2_click)
-        #self.button2.pack(side=tk.TOP)
-
         self.system_box = tk.Text(self.container1, state="disabled")
+        self.system_box.configure(height=15, borderwidth=3, highlightbackground="black")
         self.system_box.pack(side=tk.TOP)
 
         self.chat_box = tk.Text(self.container1, state="disabled")
+        self.chat_box.configure(borderwidth=3, highlightbackground="black")
         self.chat_box.pack(side=tk.TOP)
 
-        #self.userlist_box = tk.Text(self.container1)
-        #self.userlist_box.pack(side=tk.LEFT)
+        self.userlist_box = tk.Text(self.container1, state="disabled")
+        self.userlist_box.configure(height=4, borderwidth=3, highlightbackground="black")
+        self.userlist_box.pack(side=tk.TOP)
 
-        self.textbox = tk.Entry(self.container1)
+        self.textbox = tk.Entry(self.container1, width=70)
         self.textbox.pack(side=tk.TOP)
         #self.textbox.bind("<Return>", self.write_junk)
         self.textbox.bind("<Return>", self.handle_text)
@@ -75,7 +76,11 @@ class Tkinter_Gui:
         self.parent.destroy()
 
     def print_userlist(self, userlist):
-        return
+        self.userlist_box.delete(0, tk.END)
+        self.userlist_box.configure(state="normal")
+        for addr in userlist.keys():
+            self.userlist_box.insert("end", userlist[addr][0] + " at " + addr + "\n")
+        self.userlist_box.configure(state="disabled")
 
     # End pigeon gui interace implementation ~~~
 

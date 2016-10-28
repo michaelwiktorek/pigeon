@@ -56,13 +56,9 @@ class Pigeon_Controller:
         self.ALIVE = True
         name = self.config.read_name()
         if not name:
-            self.gui.sys_write("No name found! Type a name and press [ENTER]")
-            name = self.gui.get_text()
-            if not self.config.change_name_config(name):
-                self.gui.sys_write("Name entry failed, using default name")
-            self.gui.sys_write("Your name is now " + name)
-        else:
-            return name
+            self.gui.sys_write("No name found! Try \"/rename [name]\"")
+            name = C.DEFAULT_NAME
+        return name
 
     def start(self):
         self.gui.start_gui(self)
@@ -151,8 +147,6 @@ class Pigeon_Controller:
 
     def do_rename(self, new_name):
         old_name = self.config.name
-        #self.gui.sys_write("Type your new name and hit [ENTER]")
-        #new_name = self.gui.get_text()
         if not self.config.change_name_config(new_name):
             self.gui.sys_write("Error changing name!")
             return
@@ -179,8 +173,6 @@ class Pigeon_Controller:
     def do_connect(self, other):
         # communicator needs to say this
         if not self.IN_CONVERSATION:
-            #self.gui.sys_write("Enter an IP or name")
-            #other = self.gui.get_text()
             # we want to spawn a thread here
             # to do connect_background
             self.communicator.server_wait = False  # stop comm.wait_connection
