@@ -162,6 +162,7 @@ class Pigeon_Controller:
         if self.register.CONNECTED:
             self.register.re_register(old_name, new_name)
         self.gui.sys_write("Your new name is " + self.config.name)
+        self.do_online(None)
 
     def do_quit(self, arg):
         self.gui.sys_write("Quitting...")
@@ -216,7 +217,7 @@ class Pigeon_Controller:
         sender.join()
     
     def connect_background(self, ip):
-        conn, other_name = self.communicator.attempt_connection(self.config.name, ip)
+        conn, other_name = self.communicator.attempt_connection(ip)
         if conn:
             self.start_convo(conn, other_name)
             conn.close()
@@ -226,7 +227,7 @@ class Pigeon_Controller:
             self.wait_conn_thread.start()
 
     def wait_connection_background(self):
-        conn, other_name = self.communicator.wait_connection(self.config.name)
+        conn, other_name = self.communicator.wait_connection()
         if conn:
             self.start_convo(conn, other_name)
             conn.close()

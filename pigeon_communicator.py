@@ -41,7 +41,7 @@ class Communicator:
         self.n, self.e = self.rsa.get_public_key()
 
     # wait for a connection, and send our name on it
-    def wait_connection(self, name):
+    def wait_connection(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.HOST, C.CLIENT_MAIN_PORT))
@@ -67,12 +67,12 @@ class Communicator:
         other_name, pub_key = self.recv_other_data(conn)
         self.rsa.get_other_pub_key(pub_key)
         # send our name back to other user
-        data = name + ":" + str(self.n) + ":" + str(self.e)
+        data = self.config.name + ":" + str(self.n) + ":" + str(self.e)
         conn.sendall(data)
         return (conn, other_name)
 
     # attempt to make a connection, and send our name on it
-    def attempt_connection(self, name, ip):
+    def attempt_connection(self, ip):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((self.HOST, C.CLIENT_MAIN_PORT))
@@ -92,7 +92,7 @@ class Communicator:
         sock.settimeout(self.TIMEOUT)
 
         #send data to the other user
-        data = name + ":" + str(self.n) + ":" + str(self.e)
+        data = self.config.name + ":" + str(self.n) + ":" + str(self.e)
         sock.sendall(data)
         # wait for their name in return
         other_name, pub_key = self.recv_other_data(sock)
