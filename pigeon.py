@@ -17,18 +17,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 import sys
+import os
 from pigeon_communicator   import Communicator
 from pigeon_controller     import Pigeon_Controller
 from pigeon_config         import Pigeon_Config
 from pigeon_constants      import Pigeon_Constants as C
 from pigeon_register_agent import Pigeon_Register_Agent
-from curses_gui            import Curses_Gui
 from tkinter_gui           import Tkinter_Gui
 from rsa                   import RSA
 
+EXECUTABLE = True
+
 # just import your gui and add it here!
-gui_list = {"curses"  : Curses_Gui,
-            "tkinter" : Tkinter_Gui}
+gui_list = {"tkinter" : Tkinter_Gui}
 
 def print_usage_exit():
     valid_guis = " | ".join(gui_list.keys())
@@ -37,12 +38,19 @@ def print_usage_exit():
 
 if __name__ == "__main__":
 
-    #try:
-    #    gui_choice = sys.argv[1].lower()
-    #    gui = gui_list[gui_choice]()
-    #except:
-    #    print_usage_exit()
-    gui = Tkinter_Gui()
+    if EXECUTABLE: 
+        gui = Tkinter_Gui()
+    else:
+        try:
+            try:
+                from curses_gui import Curses_Gui
+                gui_list["curses"] = Curses_Gui
+            except ImportError:
+                pass
+            gui_choice = sys.argv[1].lower()
+            gui = gui_list[gui_choice]()
+        except:
+            print_usage_exit()
     
     config = Pigeon_Config()
     register_agent = Pigeon_Register_Agent(sys.argv)

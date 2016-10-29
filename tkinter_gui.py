@@ -40,11 +40,11 @@ class Tkinter_Gui:
 
         self.textbox = tk.Entry(self.container1, width=70)
         self.textbox.pack(side=tk.TOP)
-        #self.textbox.bind("<Return>", self.write_junk)
         self.textbox.bind("<Return>", self.handle_text)
         self.textbox.focus_force()
 
         self.parent.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.parent.createcommand('tk::mac::Quit', self.on_closing)
 
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
@@ -69,7 +69,7 @@ class Tkinter_Gui:
     def chat_notify(self, message):
         self.chat_write(message, "SYSTEM")
 
-    # this will need some work if gui handles the main loop
+    # not used, since the gui handles the main loop
     def get_text(self):
         return
 
