@@ -73,7 +73,7 @@ class Pigeon_Server:
                     break  # let me die
                 time.sleep(1)
 
-        print ("...")
+        #print ("...")
 
     def recv_loop_UDP(self):
         while self.ALIVE:
@@ -106,7 +106,7 @@ class Pigeon_Server:
                 list_sock.sendto(userlist, (client_addr, client_port))
                 list_sock.close()
             
-            self.print_online_users()
+            #self.print_online_users()
             self.userlist_lock.release()
             
     def send_ack(self, address):
