@@ -53,7 +53,7 @@ if __name__ == "__main__":
             print_usage_exit()
     
     config = Pigeon_Config()
-    register_agent = Pigeon_Register_Agent(sys.argv)
+    register_agent = Pigeon_Register_Agent()
     communicator = Communicator(config, register_agent)
     controller = Pigeon_Controller(config, register_agent, communicator, gui)
 
