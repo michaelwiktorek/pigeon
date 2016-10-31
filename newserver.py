@@ -29,6 +29,7 @@ class Pigeon_Server:
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.settimeout(self.TIMEOUT)
         self.server.bind((self.HOST, C.SERVER_MAIN_PORT))
+        self.server.setblocking(0)
         self.server.listen(5)
         self.connections.append(self.server)
         print "listening on port " + str(C.SERVER_MAIN_PORT)
@@ -88,11 +89,12 @@ class Pigeon_Server:
     def handle_server(self, conn):
         try:
             conn, addr = self.sock.accept()
+            print "got initial conn from " + addr
+            conn.setblocking(0)
+            self.connections.append(conn)
         except:
             print "Error receiving new connection"
             return
-        print "got initial conn from " + addr
-        self.connections.append(conn)
 
     def handle_err(self, conn):
         client_addr = conn.getpeername()[0]
