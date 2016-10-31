@@ -50,8 +50,11 @@ class Pigeon_Server:
                 for conn in errs:
                     self.handle_err(conn)
             except:
-                self.kill_connections()
+                if not self.ALIVE:
+                    self.kill_connections()
+                print "num conns: " + len(self.connections)
                 print "Select call interrupted (this is probably okay?)"
+                return
             
     def handle_read(self, conn):
         if conn == self.server:
