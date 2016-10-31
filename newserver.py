@@ -52,7 +52,7 @@ class Pigeon_Server:
             except:
                 if not self.ALIVE:
                     self.kill_connections()
-                print "num conns: " + len(self.connections)
+                print "num conns: " + str(len(self.connections))
                 print "Select call interrupted (this is probably okay?)"
                 return
             
@@ -96,7 +96,7 @@ class Pigeon_Server:
             new_conn.setblocking(0)
             self.connections.append(new_conn)
         except:
-            print "num conns: " + len(self.connections)
+            print "num conns: " + str(len(self.connections))
             print "Error receiving new connection"
             return
 
