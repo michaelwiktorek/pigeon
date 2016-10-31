@@ -42,7 +42,7 @@ class Pigeon_Server:
         while self.ALIVE:
             try:
                 print "waiting on select"
-                reads, writes, errs = select.select(self.connections, [], self.connections)
+                reads, writes, errs = select.select(self.connections, [], self.connections, 1)
                 for conn in reads:
                     self.handle_read(conn)
                 for conn in errs:
