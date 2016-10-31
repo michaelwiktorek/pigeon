@@ -27,7 +27,7 @@ class Pigeon_Server:
     def start(self):
         self.ALIVE = True
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.settimeout(self.TIMEOUT)
+        #self.server.settimeout(self.TIMEOUT)
         self.server.bind((self.HOST, C.SERVER_MAIN_PORT))
         self.server.setblocking(0)
         self.server.listen(5)
