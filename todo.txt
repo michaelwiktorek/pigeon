@@ -10,13 +10,14 @@ make sure the server gets the proper ip address
 add per-session RSA encryption to messaging
 refactor pigeon_gui (modular gui is possible now!)
 stop program from crashing when you resize the terminal (kind of)
+write tkinter gui, allows scrolling, long messages
 
 TODO:
-allow typing box to expand  [maybe impossible]
-add scrolling of text history
 store list of names/ips
 handle receiving long strings (bigger than 2048 bits?)
-write new gui that doesn't use curses
+stop requiring "enter" to end convo in tkinter
+send other user new name when you rename during conversation
+rewrite server code to use TCP
 
 WILD'N'CRAZY:
 chat with multiple users at once
@@ -30,11 +31,9 @@ connect fail bug:
 	still a problem
 	this bug seems to disappear after waiting for ten seconds or so
 
+resize breaks curses gui:
+       happens on cygwin and over ssh
 
-
-rsa chat length:     DONE
-    	long message becomes gibberish, calculate length and break up message
-
-resize window bug:  DONE, pretty well at least
-       fatal program crash when window is resized
-       still crashes the curses gui on Cygwin
+upnp failure:
+     upnp device discovery is inconsistent
+     figure out multicast?
