@@ -47,7 +47,7 @@ class Curses_Gui:
     def print_userlist(self, userlist):
         self.userlist_pad.clear()
         for addr in userlist.keys():
-            self.userlist_pad.write(userlist[addr][0] + " at " + addr)
+            self.userlist_pad.write(userlist[addr] + " at " + addr)
 
     def get_text(self):
         return self.textbox.edit()

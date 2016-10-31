@@ -44,9 +44,12 @@ class Pigeon_Server:
     # loop on select on all open sockets
     def connect_loop(self):
         while self.ALIVE:
-            reads, writes, errs = select.select(self.connections, [], self.connections)
-            for conn in reads:
-                self.handle_read(conn)
+            try:
+                reads, writes, errs = select.select(self.connections, [], self.connections)
+                for conn in reads:
+                    self.handle_read(conn)
+            except select.error:
+                print "Interrupted system call 'select', which is normal."
 
     # sort out new connections from data packets
     def handle_read(self, conn):

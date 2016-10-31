@@ -81,7 +81,7 @@ class Communicator:
             if len(ip.split(".")) != 4:
                 # this is a name, not an IP, so search userlist
                 for addr in self.register_agent.userlist.keys():
-                    if self.register_agent.userlist[addr][0] == ip:
+                    if self.register_agent.userlist[addr] == ip:
                         ip = addr
         try:
             sock.connect((ip, C.CLIENT_MAIN_PORT))
