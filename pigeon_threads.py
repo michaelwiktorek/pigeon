@@ -14,7 +14,7 @@ class Pigeon_Threads:
             try:
                 message = controller.msg_send.get(block=True, timeout=1)
                 # we could try send/recv public keys here
-                if message == C.KILL or message.split("|")[0] = C.RENAME:
+                if message == C.KILL or message.split("|")[0] == C.RENAME:
                     msg_cipher = message
                 else:
                     msg_cipher = rsa.encipher_long_str(message)
