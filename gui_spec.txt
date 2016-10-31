@@ -14,6 +14,9 @@ chat_notify(message):
 print_userlist(userlist):
 	print a dict {addr:username} in a userlist display in the form "username: addr"
 
+send_blank():
+	send the controller a blank string. Only used if HANDLES_MAIN_LOOP is true
+
 get_text():
 	return a string typed into the chat box by the user
 	Note: might need to be changed if HANDLES_MAIN_LOOP

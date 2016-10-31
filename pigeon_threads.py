@@ -24,16 +24,21 @@ class Pigeon_Threads:
 
     @staticmethod
     def receive_worker(sock, controller, other_name):
+        convo_name = other_name
         gui = controller.gui
         rsa = controller.communicator.rsa
         while controller.communicator.THREAD_STAY_ALIVE:
             try:
                 message = sock.recv(2048)
                 if message == C.KILL:
-                    gui.chat_notify("Other side has disconnected, hit [ENTER] to leave")
                     controller.HANGUP = True
+                    gui.chat_notify("Other side has disconnected, hit [ENTER] to acknowledge")
+                elif message.split("|")[0] == C.RENAME:
+                    # other user has sent rename message
+                    convo_name = message.split("|")[1]
+                    gui.chat_notify("Other side changed name to " + convo_name)
                 elif message:
                     message_decrypt = rsa.decipher_long_str(message)
-                    gui.chat_write(message_decrypt, other_name)
+                    gui.chat_write(message_decrypt, convo_name)
             except:
                 continue

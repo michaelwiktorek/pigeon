@@ -41,7 +41,10 @@ class Pigeon_Controller:
 
     # route a command to its associated function
     def handle_text(self, text):
-        if len(text) > 1 and text[0] == "/":
+        if self.HANGUP:
+            self.handle_hangup()
+            return
+        elif len(text) > 1 and text[0] == "/":
             cmd_ary = text.replace("\n", "").split()
             if len(cmd_ary) > 1:
                 cmd = cmd_ary[0]
@@ -53,7 +56,7 @@ class Pigeon_Controller:
                 self.command_map[cmd](arg)
             except KeyError:
                 self.gui.sys_write("Invalid Command")
-        elif self.IN_CONVERSATION:
+        elif self.IN_CONVERSATION and len(text) > 0:
             self.gui.chat_write(text, "You")
             self.msg_send.put(text)
 
@@ -64,6 +67,9 @@ class Pigeon_Controller:
             self.gui.sys_write("No name found! Try \"/rename [name]\"")
             name = C.DEFAULT_NAME
         return name
+
+    def send_rename(self, new_name):
+        self.msg_send.put(C.RENAME + "|" + new_name)
 
     def start(self):
         self.gui.start_gui(self)
@@ -99,9 +105,6 @@ class Pigeon_Controller:
     def main_loop(self):
         while self.ALIVE:
             text = self.gui.get_text()
-            if self.HANGUP:
-                self.handle_hangup()
-                continue
             self.handle_text(text)
 
     # command handler functions ~~~~
@@ -162,6 +165,8 @@ class Pigeon_Controller:
         if self.register.CONNECTED:
             self.register.re_register(old_name, new_name)
         self.gui.sys_write("Your new name is " + self.config.name)
+        if self.IN_CONVERSATION:
+            self.send_rename(self.config.name)
         self.do_online(None)
 
     def do_quit(self, arg):
@@ -199,7 +204,11 @@ class Pigeon_Controller:
             # TODO this might kill send threat too early?
             #self.communicator.THREAD_STAY_ALIVE = False
             self.HANGUP = True
-            self.gui.chat_notify("You have disconnected, hit [ENTER] to leave")
+            if self.gui.HANDLES_MAIN_LOOP:
+                self.gui.chat_notify("You have disconnected")
+                self.gui.send_blank()
+            else:
+                self.gui.chat_notify("You have disconnected, hit [ENTER] to leave")
         else:
             self.gui.sys_write("Not in a conversation!")
 

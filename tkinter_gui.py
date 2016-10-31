@@ -66,6 +66,10 @@ class Tkinter_Gui:
         self.chat_box.configure(state="disabled")
         self.parent.update()
 
+    # used after a hangup 
+    def send_blank(self):
+        self.controller.handle_text("")
+
     def chat_notify(self, message):
         self.chat_write(message, "SYSTEM")
 
@@ -97,9 +101,6 @@ class Tkinter_Gui:
         if self.controller.ALIVE:
             text = self.textbox.get()
             self.textbox.delete(0, tk.END)
-            if self.controller.HANGUP:
-                self.controller.handle_hangup()
-                return
             self.controller.handle_text(text)
 
     

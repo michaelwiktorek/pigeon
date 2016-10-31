@@ -19,6 +19,7 @@ class Pigeon_Constants:
     TEST = "test"
     REQUEST = "requ"
     KILL = "*>*>*>*>"
+    RENAME = "<*<*<*<*"
 
     # numbers
     ONLINE_TIMEOUT_SECS = 10  # set to 60 or higher for production use
