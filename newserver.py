@@ -89,7 +89,7 @@ class Pigeon_Server:
         except:
             print "Error receiving new connection"
             return
-        self.connections.append()
+        self.connections.append(conn)
 
     def handle_err(self, conn):
         client_addr = conn.getpeername()[0]
