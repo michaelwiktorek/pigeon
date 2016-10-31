@@ -88,10 +88,10 @@ class Pigeon_Server:
 
     def handle_server(self, conn):
         try:
-            conn, addr = self.sock.accept()
+            new_conn, addr = conn.accept()
             print "got initial conn from " + addr
-            conn.setblocking(0)
-            self.connections.append(conn)
+            new_conn.setblocking(0)
+            self.connections.append(new_conn)
         except:
             print "Error receiving new connection"
             return
