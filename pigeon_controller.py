@@ -163,7 +163,7 @@ class Pigeon_Controller:
             self.gui.sys_write("Error changing name!")
             return
         if self.register.CONNECTED:
-            self.register.re_register(old_name, new_name)
+            self.register.re_register(new_name)
         self.gui.sys_write("Your new name is " + self.config.name)
         if self.IN_CONVERSATION:
             self.send_rename(self.config.name)

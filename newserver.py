@@ -24,6 +24,7 @@ class Pigeon_Server:
         self.TIMEOUT = 1
         self.HOST = ""
 
+    # init listen socket and start main loop
     def start(self):
         self.ALIVE = True
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -40,35 +41,43 @@ class Pigeon_Server:
         # TODO this may be unnecessary
         self.server.close()
 
+    # loop on select on all open sockets
     def connect_loop(self):
         while self.ALIVE:
-            try:
-                print "waiting on select"
-                reads, writes, errs = select.select(self.connections, [], self.connections)
-                for conn in reads:
-                    self.handle_read(conn)
-                for conn in errs:
-                    self.handle_err(conn)
-            except:
-                if not self.ALIVE:
-                    self.kill_connections()
-                print "num conns: " + str(len(self.connections))
-                print "Select call interrupted (this is probably okay?)"
-                return
-            
+            reads, writes, errs = select.select(self.connections, [], self.connections)
+            for conn in reads:
+                self.handle_read(conn)
+
+    # sort out new connections from data packets
     def handle_read(self, conn):
         if conn is self.server:
             self.handle_server(conn)
         else:
-            self.handle_message(conn)
-            
-    def handle_message(self, conn):
+            self.handle_data(conn)
+
+    # sort out filled data packets from empties (indicate disconnect)
+    def handle_data(self, conn):
+        data = conn.recv(2048)
+        if data:
+            self.handle_message(conn, data)
+        else:
+            self.handle_disconnect(conn)
+
+    # handle empty packet (disconnect)
+    def handle_disconnect(self, conn):
+        client_addr = conn.getpeername()[0]
+        print client_addr + " suddenly disconnected"
         try:
-            data = conn.recv(2048)
+            del self.online_users[client_addr]
         except:
-            print "Error reading from " + conn.getpeername()[0]
-            return
+            print client_addr + " disconnected but was already offline... ?"
+        conn.close()
+        self.connections.remove(conn)
+
+    # handle filled data packet (message from client)
+    def handle_message(self, conn, data):
         user_info = data.split(":")
+        print user_info
         name = user_info[0]
         mesg = user_info[1]
         client_addr = conn.getpeername()[0]
@@ -76,39 +85,30 @@ class Pigeon_Server:
         if mesg == C.REGISTER:
             print "register from " + name + " at " + client_addr
             self.online_users[client_addr] = name
+        elif mesg == C.RE_REGISTER:
+            try:
+                self.online_users[client_addr] = name
+            except KeyError:
+                print "Invalid rename from " + client_addr
         elif mesg == C.UNREGISTER:
             print "un_register from " + name + " at " + client_addr
             try:
                 del self.online_users[client_addr]
             except KeyError:
-                print name + " was already offline!"
+                print name + " was already offline... ?"
             conn.close()
             self.connections.remove(conn)
         elif mesg == C.REQUEST:
-            print "sending userlist"
+            print "Sending userlist to " + client_addr
             userlist = json.dumps(self.online_users)
             conn.sendall(userlist)
 
+    # handle connection request from a new client
     def handle_server(self, conn):
-        try:
-            new_conn, addr = conn.accept()
-            print "got initial conn from " + addr
-            new_conn.setblocking(0)
-            self.connections.append(new_conn)
-        except:
-            print "num conns: " + str(len(self.connections))
-            print "Error receiving new connection"
-            return
-
-    def handle_err(self, conn):
-        client_addr = conn.getpeername()[0]
-        print client_addr + " produced error (lost connection?)"
-        try:
-            del self.online_users[client_addr]
-        except:
-            print client_addr + " errored but was already offline"
-        conn.close()
-        self.connections.remove(conn)
+        new_conn, addr = conn.accept()
+        print "got initial conn from " + addr[0]
+        new_conn.setblocking(0)
+        self.connections.append(new_conn)
 
     def kill_connections(self):
         for conn in self.connections:

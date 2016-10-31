@@ -16,6 +16,7 @@ class Pigeon_Constants:
     ACK = "ack"
     REGISTER = "reg"
     UNREGISTER = "unreg"
+    RE_REGISTER = "rereg"
     TEST = "test"
     REQUEST = "requ"
     KILL = "*>*>*>*>"

@@ -60,10 +60,8 @@ class Pigeon_Register_Agent:
                 return True
         return False
 
-    def re_register(self, old_name, new_name):
-        self.send_message(old_name + ":" + C.UNREGISTER)
-        self.send_message(new_name + ":" + C.REGISTER)
-
+    def re_register(self, new_name):
+        self.send_message(new_name + ":" + C.RE_REGISTER)
 
     def register(self, name):
         if self.establish_conn() and self.send_message(name + ":" + C.REGISTER):
