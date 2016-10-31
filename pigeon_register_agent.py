@@ -44,6 +44,7 @@ class Pigeon_Register_Agent:
             try:
                 return self.conn.recv(2048)
             except:
+                attempts_made += 1
                 continue
         return None
 
@@ -56,11 +57,6 @@ class Pigeon_Register_Agent:
                 return True
         return False
 
-    def print_userlist(self):
-        for addr in self.userlist.keys():
-            print self.userlist[addr][0] + " online at " + addr
-
-    
     def re_register(self, old_name, new_name):
         self.send_message(old_name + ":" + C.UNREGISTER)
         self.send_message(new_name + ":" + C.REGISTER)

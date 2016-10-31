@@ -41,6 +41,7 @@ class Pigeon_Server:
     def connect_loop(self):
         while self.ALIVE:
             try:
+                print "waiting on select"
                 reads, writes, errs = select.select(self.connections, [], self.connections)
                 for conn in reads:
                     self.handle_read(conn)
@@ -89,6 +90,7 @@ class Pigeon_Server:
         except:
             print "Error receiving new connection"
             return
+        print "got initial conn from " + addr
         self.connections.append(conn)
 
     def handle_err(self, conn):
