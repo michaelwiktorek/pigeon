@@ -79,6 +79,7 @@ class Pigeon_Server:
             conn.close()
             self.connections.remove(conn)
         elif mesg == C.REQUEST:
+            print "sending userlist"
             userlist = json.dumps(self.online_users)
             conn.sendall(userlist)
 

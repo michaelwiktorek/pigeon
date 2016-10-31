@@ -26,7 +26,7 @@ from pigeon_register_agent import Pigeon_Register_Agent
 from tkinter_gui           import Tkinter_Gui
 from rsa                   import RSA
 
-EXECUTABLE = True
+EXECUTABLE = False
 
 # just import your gui and add it here!
 gui_list = {"tkinter" : Tkinter_Gui}
