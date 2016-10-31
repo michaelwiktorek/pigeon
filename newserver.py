@@ -30,6 +30,7 @@ class Pigeon_Server:
         self.server.settimeout(self.TIMEOUT)
         self.server.bind((self.HOST, C.SERVER_MAIN_PORT))
         self.server.listen(5)
+        self.connections.append(self.server)
         print "listening on port " + str(C.SERVER_MAIN_PORT)
 
         # here is our main server loop
