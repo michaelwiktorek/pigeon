@@ -57,7 +57,7 @@ class Pigeon_Server:
                 return
             
     def handle_read(self, conn):
-        if conn == self.server:
+        if conn is self.server:
             self.handle_server(conn)
         else:
             self.handle_message(conn)
