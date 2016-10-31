@@ -19,6 +19,9 @@ class Pigeon_Register_Agent:
         self.MAX_ATTEMPTS = 1
         self.TIMEOUT = 1
 
+    def set_server_ip(self, ip):
+        self.server_ip = ip
+        
     def establish_conn(self):
         try:
             self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
