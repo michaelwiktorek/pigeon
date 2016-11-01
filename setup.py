@@ -9,7 +9,7 @@ from setuptools import setup
 
 APP = ['pigeon.py']
 DATA_FILES = []
-OPTIONS = {'argv_emulation': False,
+OPTIONS = {'argv_emulation': True,
  'iconfile': 'pigeon.icns'}
 
 setup(
