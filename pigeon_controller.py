@@ -250,22 +250,16 @@ class Pigeon_Controller:
             self.gui.sys_write("No router detected. UPnP disabled, or no router exists")
         else:
             self.UPNP_PORTS_FORWARDED = True
-            res1 = self.upnp.udp_tunnel(C.CLIENT_TEST_PORT, self.local_ip)
-            res2 = self.upnp.tcp_tunnel(C.CLIENT_MAIN_PORT, self.local_ip)
-            res3 = self.upnp.udp_tunnel(C.CLIENT_REGISTER_PORT, self.local_ip)
-            
-            if int(res1.status) == 500:
-                self.gui.sys_write("Failed to forward ports")
+            resp = self.upnp.tcp_tunnel(C.CLIENT_MAIN_PORT, self.local_ip)
+            if int(resp.status) == 500:
+                self.gui.sys_write("Failed to forward main port")
                 self.UPNP_PORTS_FORWARDED = False
 
     def upnp_close_ports(self):
         if self.UPNP_PORTS_FORWARDED:
-            res1 = self.upnp.udp_end_tunnel(C.CLIENT_TEST_PORT, self.local_ip)
-            res2 = self.upnp.tcp_end_tunnel(C.CLIENT_MAIN_PORT, self.local_ip)
-            res3 = self.upnp.udp_end_tunnel(C.CLIENT_REGISTER_PORT, self.local_ip)
-
-            if int(res1.status) == 500:
-                self.gui.sys_write("Failed to close ports")
+            resp = self.upnp.tcp_end_tunnel(C.CLIENT_MAIN_PORT, self.local_ip)
+            if int(resp.status) == 500:
+                self.gui.sys_write("Failed to close main port")
             else:
                 self.UPNP_PORTS_FORWARDED = False
 

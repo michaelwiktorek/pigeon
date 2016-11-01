@@ -5,12 +5,8 @@ Copyright (C) 2016 Michael Wiktorek
 
 class Pigeon_Constants:
     # ports
-    SERVER_MAIN_PORT     = 5554
-    SERVER_REGISTER_PORT = 1812
-    
-    CLIENT_TEST_PORT     = 5555
-    CLIENT_MAIN_PORT     = 1777
-    CLIENT_REGISTER_PORT = 1791
+    SERVER_MAIN_PORT = 5554  
+    CLIENT_MAIN_PORT = 5555
 
     # messages
     ACK = "ack"
