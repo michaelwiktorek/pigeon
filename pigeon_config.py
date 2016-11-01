@@ -8,11 +8,6 @@ from pigeon_constants import Pigeon_Constants as C
 class Pigeon_Config:
     def __init__(self):
         self.name = C.DEFAULT_NAME
-
-    def get_gui(self, gui):
-        self.gui = gui
-        self.display = gui.system_pad
-        self.textbox = gui.textbox
         
     # attempt to read name from config file
     # if no file exists, create it
