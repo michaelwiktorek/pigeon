@@ -47,7 +47,10 @@ if __name__ == "__main__":
                 gui_list["curses"] = Curses_Gui
             except ImportError:
                 pass
-            gui_choice = sys.argv[1].lower()
+            if len(sys.argv) < 2:
+                gui_choice = "tkinter"
+            else:
+                gui_choice = sys.argv[1].lower()
             gui = gui_list[gui_choice]()
         except:
             print_usage_exit()
