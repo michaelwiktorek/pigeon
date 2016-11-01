@@ -11,13 +11,13 @@ add per-session RSA encryption to messaging
 refactor pigeon_gui (modular gui is possible now!)
 stop program from crashing when you resize the terminal (kind of)
 write tkinter gui, allows scrolling, long messages
+rewrite server code to use TCP/select
+stop requiring "enter" to end convo in tkinter (kind of)
+send other user new name when you rename during conversation
 
 TODO:
 store list of names/ips
 handle receiving long strings (bigger than 2048 bits?)
-stop requiring "enter" to end convo in tkinter
-send other user new name when you rename during conversation
-rewrite server code to use TCP
 
 WILD'N'CRAZY:
 chat with multiple users at once
