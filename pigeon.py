@@ -33,7 +33,7 @@ gui_list = {"tkinter" : Tkinter_Gui}
 
 def print_usage_exit():
     valid_guis = " | ".join(gui_list.keys())
-    print "usage: python main.py < " + valid_guis + " >"
+    print "usage: python pigeon.py < " + valid_guis + " >"
     sys.exit(0)
 
 if __name__ == "__main__":

@@ -30,6 +30,3 @@ end_gui():
 bool: HANDLES_MAIN_LOOP
       True: the gui handles the main loop
       False: the controller handles the main loop
-      
-main_loop():
-	handles the input loop, if HANDLES_MAIN_LOOP is True

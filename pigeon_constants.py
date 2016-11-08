@@ -44,3 +44,10 @@ Type a command and then hit [ENTER]
 /unregister      ... unregister with a server
 /rename   [name] ... change your name
 /commands        ... see a list of commands"""
+
+    # commands ought to be made into constants
+    CMD_LIST = ["/quit", "/connect", "/hangup",
+                "/online", "/register", "/unregister",
+                "/rename", "/commands"]
+    
+    CMD_LIST_ARGS = ["/connect", "/register", "/rename"]

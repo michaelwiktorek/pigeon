@@ -10,9 +10,36 @@ from pigeon_constants import Pigeon_Constants as C
 class Curses_Gui:
     
     def __init__(self):
+        # HANDLES_MAIN_LOOP described in gui_spec.txt
         self.HANDLES_MAIN_LOOP = False
         return
 
+    def initialize_elements(self):
+        scr_y, scr_x = self.screen.getmaxyx()
+
+        # four different windows for displaying text
+        self.chat_pad     = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
+        self.system_pad   = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
+        self.textbox      = Simple_Textbox(3, scr_x, scr_y-3, 0, self)
+        self.userlist_pad = Scroll_Pad(2*scr_y/3, scr_x/3, 0, 2*scr_x/3)
+
+    def resize_handler(self):
+        scr_y, scr_x = self.screen.getmaxyx()
+        self.screen.clear()
+        self.screen.refresh()
+        self.chat_pad.resize(2*scr_y/3, 2*scr_x/3)
+        self.system_pad.resize(2*scr_y/3, 2*scr_x/3)
+        self.userlist_pad.resize(2*scr_y/3, scr_x/3-1)
+        self.userlist_pad.move(0, 2*scr_x/3)
+        self.textbox.move(scr_y-3, 0)
+        self.textbox.resize(3, scr_x)
+        self.chat_pad.refresh()
+        self.system_pad.refresh()
+        self.userlist_pad.refresh()
+        curses.resizeterm(scr_y, scr_x)
+
+    # ----- Begin pigeon gui interface implementation -----
+    
     def start_gui(self, controller):
         self.screen = curses.initscr()
         curses.noecho()
@@ -25,15 +52,6 @@ class Curses_Gui:
         self.screen.keypad(0)
         curses.echo()
         curses.endwin()
-
-    def initialize_elements(self):
-        scr_y, scr_x = self.screen.getmaxyx()
-
-        # four different windows for displaying text
-        self.chat_pad     = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
-        self.system_pad   = Scroll_Pad(2*scr_y/3, 2*scr_x/3, 0, 0)
-        self.textbox      = Simple_Textbox(3, scr_x, scr_y-3, 0, self)
-        self.userlist_pad = Scroll_Pad(2*scr_y/3, scr_x/3, 0, 2*scr_x/3)
 
     def sys_write(self, message):
         self.system_pad.write_from_name(message, "SYSTEM")
@@ -52,23 +70,14 @@ class Curses_Gui:
     def get_text(self):
         return self.textbox.edit()
 
-    def resize_handler(self):
-        scr_y, scr_x = self.screen.getmaxyx()
-        self.screen.clear()
-        self.screen.refresh()
-        self.chat_pad.resize(2*scr_y/3, 2*scr_x/3)
-        self.system_pad.resize(2*scr_y/3, 2*scr_x/3)
-        self.userlist_pad.resize(2*scr_y/3, scr_x/3-1)
-        self.userlist_pad.move(0, 2*scr_x/3)
-        self.textbox.move(scr_y-3, 0)
-        self.textbox.resize(3, scr_x)
-        self.chat_pad.refresh()
-        self.system_pad.refresh()
-        self.userlist_pad.refresh()
-        curses.resizeterm(scr_y, scr_x)
+    # Not used, since HANDLES_MAIN_LOOP is False
+    def send_blank(self):
+        return
+
+    # ----- End pigeon gui interface implementation -----
 
 
-
+    
 # extension of curses pad that scrolls
 class Scroll_Pad:
     def __init__(self, nrow, ncol, y, x):
